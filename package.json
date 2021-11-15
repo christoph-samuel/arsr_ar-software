@@ -12,6 +12,7 @@
     "ar.js": "^2.2.2",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
+    "material-icons-font": "^2.1.0",
     "vue": "^2.6.11",
     "vue-material": "^1.0.0-beta-15"
   },
