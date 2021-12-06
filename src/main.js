@@ -10,11 +10,11 @@ Vue.config.ignoredElements = [
     'a-scene',
     'a-entity',
     'a-camera',
-    'a-box',
-    'a-cylinder',
     'a-plane',
-    'a-sky',
-    'a-marker'
+    'a-marker',
+    'a-assets',
+    'a-asset-item',
+    'a-gltf-model'
 ]
 
 new Vue({

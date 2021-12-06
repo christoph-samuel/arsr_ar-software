@@ -1,30 +1,34 @@
 <template>
-  <a-scene embedded arjs="debugUIEnabled: false;">
-    <a-marker preset='pattern' type='pattern'
-              url='https://raw.githubusercontent.com/christoph-samuel/arsr_ar-software/main/plain/marker/pattern-green.patt'
-              @markerFound="found('Green')" @markerLost="lost('Green')">
-      <a-plane position="0 0 -1" rotation="-90 0 0" width="1" height="1" color="green">
-        <a-entity :text="{value: 'Custom Marker GREEN'}" baseline="center" width="2"></a-entity>
-      </a-plane>
-    </a-marker>
+  <a-scene arjs="debugUIEnabled: false;" keyboard-shortcuts>
+    <a-assets>
+      <a-asset-item id="logoGLTF" src="/3d/logo.glb"></a-asset-item>
+    </a-assets>
 
-    <a-marker preset='pattern' type='pattern'
-              url='https://raw.githubusercontent.com/christoph-samuel/arsr_ar-software/main/plain/marker/pattern-red.patt'
-              @markerFound="found('Red')" @markerLost="lost('Red')">
-      <a-plane position="0 0 -1" rotation="-90 0 0" width="1" height="1" color="red">
-        <!--        <a-entity :text="{color: white, align: center, value: 'Custom Marker RED'}"></a-entity>-->
-      </a-plane>
-    </a-marker>
+    <!--    <a-marker preset='pattern' type='pattern'-->
+    <!--              url='https://raw.githubusercontent.com/christoph-samuel/arsr_ar-software/main/plain/marker/pattern-green.patt'-->
+    <!--              @markerFound="found('Green')" @markerLost="lost('Green')">-->
+    <!--      <a-plane position="0 0 -1" rotation="-90 0 0" width="1" height="1" color="green">-->
+    <!--        <a-entity :text="{value: 'Custom Marker GREEN'}" baseline="center" width="2"></a-entity>-->
+    <!--      </a-plane>-->
+    <!--    </a-marker>-->
 
-    <a-marker preset='pattern' type='pattern'
-              url='https://raw.githubusercontent.com/christoph-samuel/arsr_ar-software/main/plain/marker/pattern-blue.patt'
-              @markerFound="found('Blue')" @markerLost="lost('Blue')">
-      <a-plane position="0 0 -1" rotation="-90 0 0" width="1" height="1" color="blue">
-        <a-entity :text="{value: 'Custom Marker BLUE'}" baseline="center" width="2"></a-entity>
-      </a-plane>
-    </a-marker>
+    <!--    <a-marker preset='pattern' type='pattern'-->
+    <!--              url='https://raw.githubusercontent.com/christoph-samuel/arsr_ar-software/main/plain/marker/pattern-red.patt'-->
+    <!--              @markerFound="found('Red')" @markerLost="lost('Red')">-->
+    <!--      <a-plane position="0 0 -1" rotation="-90 0 0" width="1" height="1" color="red">-->
+    <!--        &lt;!&ndash;        <a-entity :text="{color: white, align: center, value: 'Custom Marker RED'}"></a-entity>&ndash;&gt;-->
+    <!--      </a-plane>-->
+    <!--    </a-marker>-->
 
-    <a-marker preset="hiro" @markerFound="found('Hiro')" @markerLost="lost('Hiro')">
+    <!--    <a-marker preset='pattern' type='pattern'-->
+    <!--              url='https://raw.githubusercontent.com/christoph-samuel/arsr_ar-software/main/plain/marker/pattern-blue.patt'-->
+    <!--              @markerFound="found('Blue')" @markerLost="lost('Blue')">-->
+    <!--      <a-plane position="0 0 -1" rotation="-90 0 0" width="1" height="1" color="blue">-->
+    <!--        <a-entity :text="{value: 'Custom Marker BLUE'}" baseline="center" width="2"></a-entity>-->
+    <!--      </a-plane>-->
+    <!--    </a-marker>-->
+
+    <a-marker preset="hiro" @markerFound="found(332)" @markerLost="lost(332)">
       <a-plane v-show="skills != null && skills.length !== 0" position="0 0 -1" rotation="-90 0 0" width="1" height="1"
                color="white">
       </a-plane>
@@ -63,6 +67,12 @@
         </div>
       </div>
     </a-marker>
+
+    <a-marker preset="kanji" @markerFound="found('logo')" @markerLost="lost('logo')">
+      <a-gltf-model src="#logoGLTF" scale=".005 .005 .005" position="0 0 0" rotation="0 0 0"
+                    animation="property: rotation; dur: 5000; to: 0 0 360; loop: true; easing: linear">
+      </a-gltf-model>
+    </a-marker>
     <a-entity camera></a-entity>
   </a-scene>
 </template>
@@ -75,7 +85,6 @@ export default {
 
   data: () => {
     return {
-      skillAssignment: {"Hiro": 108, "Blue": 86},
       skills: [],
       links: [],
       showSkill: false,
@@ -88,26 +97,28 @@ export default {
 
   methods: {
     found(value) {
-      this.showSkill = true
       console.log(value + "-Marker found")
 
-      let sd = new SkillDisplay()
-      sd.getSkillSet(this.skillAssignment[value])
-          .then(response => {
-            console.log("Reponse:", response)
-            this.skillsTotal = response.skillCount
-            this.skills = response.skills
-            console.log("Skills:", this.skills)
-            this.links = response.links
+      if (parseInt(value)) {
+        this.showSkill = true
+        let sd = new SkillDisplay()
+        sd.getSkillSet(value)
+            .then(response => {
+              console.log("Reponse:", response)
+              this.skillsTotal = response.skillCount
+              this.skills = response.skills
+              console.log("Skills:", this.skills)
+              this.links = response.links
 
-            this.loadSkills()
-          }).catch(error => {
-        console.log(error)
-      })
+              this.loadSkills()
+            }).catch(error => {
+          console.log(error)
+        })
+      }
     },
 
     lost(value) {
-      // this.showSkill = false
+      this.showSkill = false
       console.log(value + "-Marker lost")
     },
 
@@ -203,7 +214,7 @@ p {
 #skill {
   z-index: 10;
   width: 65vw;
-  height: 50vh;
+  height: 40vh;
   overflow-y: scroll;
   position: sticky;
   top: 3vh;
@@ -212,12 +223,19 @@ p {
   flex-direction: column;
   align-items: center;
   background-color: rgba(255, 255, 255, 0.75);
-  border: 1px solid black;
+  /*border: 1px solid black;*/
   border-radius: 12px;
+  box-shadow: 10px 20px 50px -20px rgba(0, 0, 0, 0.8);
 }
 
 #skill > div {
   margin-bottom: 20px;
+}
+
+#skillHeading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #logoARSR {
@@ -245,8 +263,9 @@ p {
   font-weight: 400;
   padding: 15px 30px 0 15px;
   background-color: rgb(255, 255, 255);
-  border: 1px solid black;
+  /*border: 1px solid black;*/
   border-radius: 12px;
+  box-shadow: 10px 20px 50px -20px rgba(0, 0, 0, 0.8);
 }
 
 .skillSubHeadings {
@@ -276,5 +295,43 @@ p {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+
+@media handheld and (orientation: portrait) {
+  #skill {
+    width: 90vw;
+    padding-top: 0;
+  }
+
+  #logoARSR {
+    display: block;
+    width: 100px;
+    position: relative;
+    top: 0;
+    left: 0;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 800px) {
+  #skill {
+    width: 90vw;
+  }
+}
+
+@media (max-width: 600px) {
+  #skill {
+    padding-top: 0;
+  }
+
+  #logoARSR {
+    display: block;
+    width: 100px;
+    position: relative;
+    top: 0;
+    left: 0;
+    margin-bottom: 10px;
+  }
 }
 </style>
