@@ -2,6 +2,7 @@
   <a-scene arjs="debugUIEnabled: false;" keyboard-shortcuts>
     <a-assets>
       <a-asset-item id="logoGLTF" src="/3d/logo.glb"></a-asset-item>
+      <img id="Content-Paste-Go" src="/img/Content-Paste-Go.png">
     </a-assets>
 
     <!--    <a-marker preset='pattern' type='pattern'-->
@@ -29,9 +30,11 @@
     <!--    </a-marker>-->
 
     <a-marker preset="hiro" @markerFound="found(332)" @markerLost="lost(332)">
-      <a-plane v-show="skills != null && skills.length !== 0" position="0 0 -1" rotation="-90 0 0" width="1" height="1"
-               color="white">
-      </a-plane>
+      <!--      <a-plane v-show="skills != null && skills.length !== 0" position="0 0 -1" rotation="-90 0 0" width="1" height="1"-->
+      <!--               color="white">-->
+      <!--      </a-plane>-->
+      <a-image v-show="skills != null && skills.length !== 0" src="#Content-Paste-Go" position="0 0 0"
+               rotation="-90 0 0" width="0.5" height="0.5"></a-image>
       <!--      <div v-if="showSkill && skills != null && skills.length !== 0" id="skill">-->
       <div v-show="showSkill && skills != null && skills.length !== 0" id="skill">
         <div id="skillHeading">
@@ -73,7 +76,32 @@
                     animation="property: rotation; dur: 5000; to: 0 0 360; loop: true; easing: linear">
       </a-gltf-model>
     </a-marker>
+
     <a-entity camera></a-entity>
+
+<!--    <div id="speechtest">-->
+<!--      <p>Input: {{input}}</p>-->
+<!--      <p>Test: {{test}}</p>-->
+<!--    </div>-->
+
+    <md-card id="error" v-show="error !== null" class="md-accent" md-with-hover>
+      <md-ripple>
+        <md-card-header>
+          <div class="md-title">Error</div>
+          <div class="md-subhead">Message:</div>
+        </md-card-header>
+
+        <md-card-content>
+          {{ error }}
+        </md-card-content>
+
+        <md-card-actions id="errorActions">
+          <md-button class="md-icon-button" @click="removeError">
+            <md-icon>close</md-icon>
+          </md-button>
+        </md-card-actions>
+      </md-ripple>
+    </md-card>
   </a-scene>
 </template>
 
@@ -91,11 +119,80 @@ export default {
       skillNumber: 0,
       skillsTotal: 0,
       buttonPrev: true,
-      buttonNext: false
+      buttonNext: false,
+      input: "",
+      error: null,
+      test: ""
     }
   },
 
+  mounted() {
+    this.speech2text()
+  },
+
   methods: {
+    async speech2text() {
+      try {
+        let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+        // var SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList
+        // var SpeechRecognitionEvent = window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent
+
+        let recognition = new SpeechRecognition()
+        recognition.continuous = true
+        recognition.lang = 'de'
+        recognition.interimResults = true
+        recognition.maxAlternatives = 0
+
+        recognition.start()
+        // this.message = "Bitte sprechen ..."
+        // console.log("Message:", this.message)
+        console.log('Ready to receive a command.')
+
+        let newThis = this
+
+        recognition.onresult = function (event) {
+          newThis.input = event.results[event.results.length - 1][0].transcript
+          console.log("Input:", newThis.input)
+          console.log("Results:", event.results)
+          // console.log(event.results.length)
+          newThis.test += event.results[event.results.length - 1].isFinal
+
+          if (event.results[event.results.length - 1].isFinal) {
+            if (newThis.input.match(/Weiter\.*/i)) {
+              console.log('Case: ', 'Weiter')
+              newThis.clicked('next')
+            } else if (newThis.input.match(/Zurück\.*/i)) {
+              console.log('Case: ', 'Zurück')
+              newThis.clicked('prev')
+            } else {
+              console.log('nix da:', newThis.input)
+              console.log('nix da:', newThis.input.match(/Weiter\.*/i))
+            }
+          }
+          setTimeout(() => {
+            recognition.start();
+          }, 50);
+        }
+
+        recognition.onspeechend = function () {
+          // this.message = ""
+          // console.log("Message:", this.message)
+          newThis.speech2text()
+        }
+
+        recognition.onerror = function (event) {
+          // newThis.message = "Error in speech recognition occured, please reload the page!"
+          console.log('Error occurred in recognition: ', +event.error)
+          newThis.error = event.error
+          // newThis.error = "Error in speech recognition occured, please reload the page!"
+          newThis.speech2text()
+        }
+      } catch (e) {
+        this.error = e.message
+        // this.error = "Spracherkennung wird nicht unterstützt!"
+      }
+    },
+
     found(value) {
       console.log(value + "-Marker found")
 
@@ -168,6 +265,10 @@ export default {
           skillResources.innerHTML = "<span style='color: #00A99D'>/</span>"
         }
       }
+    },
+
+    removeError() {
+      this.error = null
     }
   }
 }
@@ -277,7 +378,7 @@ p {
 }
 
 #skillResources {
-  word-break: break-word;
+  word-break: break-all;
 }
 
 #skillInformation > div > span {
@@ -297,10 +398,46 @@ p {
   align-items: center;
 }
 
+#error {
+  width: max-content;
+  min-width: 150px;
+  position: fixed;
+  z-index: 100;
+  top: 10px;
+  right: 0;
+  left: 0;
+  margin: 0 auto;
+  box-shadow: 0 0 50px -5px rgba(0, 0, 0, 0.8);
+}
 
-@media handheld and (orientation: portrait) {
+#errorActions {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+/*#speechtest {*/
+/*  position: fixed;*/
+/*  bottom: 10px;*/
+/*  left: 10px;*/
+/*}*/
+
+
+@media screen and (max-width: 800px) {
   #skill {
     width: 90vw;
+  }
+}
+
+@media screen and (max-height: 750px) {
+  #skill {
+    width: 90vw;
+    height: 60vh;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  #skill {
     padding-top: 0;
   }
 
@@ -312,26 +449,9 @@ p {
     left: 0;
     margin-bottom: 10px;
   }
-}
 
-@media (max-width: 800px) {
-  #skill {
+  #error {
     width: 90vw;
-  }
-}
-
-@media (max-width: 600px) {
-  #skill {
-    padding-top: 0;
-  }
-
-  #logoARSR {
-    display: block;
-    width: 100px;
-    position: relative;
-    top: 0;
-    left: 0;
-    margin-bottom: 10px;
   }
 }
 </style>

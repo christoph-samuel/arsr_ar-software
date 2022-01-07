@@ -14,7 +14,8 @@ Vue.config.ignoredElements = [
     'a-marker',
     'a-assets',
     'a-asset-item',
-    'a-gltf-model'
+    'a-gltf-model',
+    'a-image'
 ]
 
 new Vue({
