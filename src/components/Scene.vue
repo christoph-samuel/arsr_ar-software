@@ -1,48 +1,28 @@
 <template>
-  <a-scene arjs="debugUIEnabled: false;" keyboard-shortcuts>
-    <a-assets>
-      <a-asset-item id="logoGLTF" src="/3d/logo.glb"></a-asset-item>
-      <img id="Content-Paste-Go" src="/img/Content-Paste-Go.png">
-    </a-assets>
+  <div style="width: 100%; height: 100%">
+    <div id="reader"></div>
+    <a-scene arjs="debugUIEnabled: false;" keyboard-shortcuts>
+      <a-assets>
+        <a-asset-item id="logoGLTF" src="/3d/logo.glb"></a-asset-item>
+        <img id="Content-Paste-Go" src="/img/Content-Paste-Go.png">
+      </a-assets>
 
-    <!--    <a-marker preset='pattern' type='pattern'-->
-    <!--              url='https://raw.githubusercontent.com/christoph-samuel/arsr_ar-software/main/plain/marker/pattern-green.patt'-->
-    <!--              @markerFound="found('Green')" @markerLost="lost('Green')">-->
-    <!--      <a-plane position="0 0 -1" rotation="-90 0 0" width="1" height="1" color="green">-->
-    <!--        <a-entity :text="{value: 'Custom Marker GREEN'}" baseline="center" width="2"></a-entity>-->
-    <!--      </a-plane>-->
-    <!--    </a-marker>-->
+      <a-marker preset="hiro" @markerFound="markerFound(332)" @markerLost="markerLost()">
+        <a-image v-show="skills != null && skills.length !== 0" src="#Content-Paste-Go" position="0 0 0"
+                 rotation="-90 0 0" width="0.5" height="0.5"></a-image>
+      </a-marker>
 
-    <!--    <a-marker preset='pattern' type='pattern'-->
-    <!--              url='https://raw.githubusercontent.com/christoph-samuel/arsr_ar-software/main/plain/marker/pattern-red.patt'-->
-    <!--              @markerFound="found('Red')" @markerLost="lost('Red')">-->
-    <!--      <a-plane position="0 0 -1" rotation="-90 0 0" width="1" height="1" color="red">-->
-    <!--        &lt;!&ndash;        <a-entity :text="{color: white, align: center, value: 'Custom Marker RED'}"></a-entity>&ndash;&gt;-->
-    <!--      </a-plane>-->
-    <!--    </a-marker>-->
+      <a-marker preset="kanji" @markerFound="markerFound('logo')" @markerLost="markerLost()">
+        <a-gltf-model src="#logoGLTF" scale=".005 .005 .005" position="0 0 0" rotation="0 0 0"
+                      animation="property: rotation; dur: 5000; to: 0 0 360; loop: true; easing: linear">
+        </a-gltf-model>
+      </a-marker>
 
-    <!--    <a-marker preset='pattern' type='pattern'-->
-    <!--              url='https://raw.githubusercontent.com/christoph-samuel/arsr_ar-software/main/plain/marker/pattern-blue.patt'-->
-    <!--              @markerFound="found('Blue')" @markerLost="lost('Blue')">-->
-    <!--      <a-plane position="0 0 -1" rotation="-90 0 0" width="1" height="1" color="blue">-->
-    <!--        <a-entity :text="{value: 'Custom Marker BLUE'}" baseline="center" width="2"></a-entity>-->
-    <!--      </a-plane>-->
-    <!--    </a-marker>-->
-
-    <a-marker preset="hiro" @markerFound="found(332)" @markerLost="lost(332)">
-      <!--      <a-plane v-show="skills != null && skills.length !== 0" position="0 0 -1" rotation="-90 0 0" width="1" height="1"-->
-      <!--               color="white">-->
-      <!--      </a-plane>-->
-      <a-image v-show="skills != null && skills.length !== 0" src="#Content-Paste-Go" position="0 0 0"
-               rotation="-90 0 0" width="0.5" height="0.5"></a-image>
-      <!--      <div v-if="showSkill && skills != null && skills.length !== 0" id="skill">-->
       <div v-show="showSkill && skills != null && skills.length !== 0" id="skill">
         <div id="skillHeading">
           <img id="logoARSR" src="/img/logo_transparent_schwarz.png" alt="Logo ARSR">
-          <!--          <p id="skillTitle">{{ skills[0].title }}</p>-->
           <p id="skillTitle"></p>
         </div>
-        <!--        <div v-show="showSkill && skills != null && skills.length !== 0" id="skillInformation">-->
         <div id="skillInformation">
           <div id="skillDescriptionDiv">
             <h3 class="skillSubHeadings">Description:</h3>
@@ -50,7 +30,6 @@
           </div>
           <div id="skillGoalsDiv">
             <h3 class="skillSubHeadings">Goals:</h3>
-            <!--            <span id="skillGoals">{{ skills[0].goals }}</span>-->
             <span id="skillGoals"></span>
           </div>
           <div id="skillResourcesDiv">
@@ -59,54 +38,44 @@
           </div>
         </div>
         <div id="skillFooter">
-          <md-button class="md-icon-button md-raised" @click="clicked('prev')" :disabled="buttonPrev">
+          <md-button class="md-icon-button md-raised" @click="navigate(-1)" :disabled="buttonPrev">
             <md-icon>chevron_left</md-icon>
           </md-button>
           <div v-if="skillsTotal === 0 || skillNumber < 0 || skillNumber+1 > skillsTotal">Nothing to show!</div>
           <div v-else>( {{ skillNumber + 1 }}/{{ skillsTotal }} )</div>
-          <md-button class="md-icon-button md-raised" @click="clicked('next')" :disabled="buttonNext">
+          <md-button class="md-icon-button md-raised" @click="navigate(1)" :disabled="buttonNext">
             <md-icon>chevron_right</md-icon>
           </md-button>
         </div>
       </div>
-    </a-marker>
 
-    <a-marker preset="kanji" @markerFound="found('logo')" @markerLost="lost('logo')">
-      <a-gltf-model src="#logoGLTF" scale=".005 .005 .005" position="0 0 0" rotation="0 0 0"
-                    animation="property: rotation; dur: 5000; to: 0 0 360; loop: true; easing: linear">
-      </a-gltf-model>
-    </a-marker>
+      <md-card id="error" v-show="error !== null" class="md-accent" md-with-hover>
+        <md-ripple>
+          <md-card-header>
+            <div class="md-title">Error</div>
+            <div class="md-subhead">Message:</div>
+          </md-card-header>
 
-    <a-entity camera></a-entity>
+          <md-card-content>
+            {{ error }}
+          </md-card-content>
 
-<!--    <div id="speechtest">-->
-<!--      <p>Input: {{input}}</p>-->
-<!--      <p>Test: {{test}}</p>-->
-<!--    </div>-->
-
-    <md-card id="error" v-show="error !== null" class="md-accent" md-with-hover>
-      <md-ripple>
-        <md-card-header>
-          <div class="md-title">Error</div>
-          <div class="md-subhead">Message:</div>
-        </md-card-header>
-
-        <md-card-content>
-          {{ error }}
-        </md-card-content>
-
-        <md-card-actions id="errorActions">
-          <md-button class="md-icon-button" @click="removeError">
-            <md-icon>close</md-icon>
-          </md-button>
-        </md-card-actions>
-      </md-ripple>
-    </md-card>
-  </a-scene>
+          <md-card-actions id="errorActions">
+            <md-button class="md-icon-button" @click="removeError">
+              <md-icon>close</md-icon>
+            </md-button>
+          </md-card-actions>
+        </md-ripple>
+      </md-card>
+    </a-scene>
+  </div>
 </template>
 
 <script>
 import {SkillDisplay} from '@/services/SkillDisplay'
+// import {speech2text} from '@/services/Speech2Text'
+import {Html5Qrcode} from 'html5-qrcode'
+// import {Html5QrcodeScanner} from 'html5-qrcode'
 
 export default {
   name: 'Scene',
@@ -121,16 +90,57 @@ export default {
       buttonPrev: true,
       buttonNext: false,
       input: "",
-      error: null,
-      test: ""
+      error: null
     }
   },
 
   mounted() {
     this.speech2text()
+    this.qrCode()
+
+    let observer = new MutationObserver((mutations) => {
+      mutations.forEach(() => {
+        document.querySelector('#reader video').style.cssText = document.getElementById('arjs-video').style.cssText
+      })
+    })
+
+    document.arrive("#arjs-video", () => {
+      observer.observe(document.getElementById('arjs-video'), { attributes : true, attributeFilter : ['style'] })
+    });
   },
 
   methods: {
+    qrCode() {
+      let config = {fps: 5}
+      let skillset
+      let showSkill = false
+
+      const html5QrCode = new Html5Qrcode("reader")
+
+      const qrCodeSuccessCallback = (decodedText) => {
+        showSkill = true
+
+        try {
+          skillset = parseInt(isNaN(parseInt(decodedText)) ? decodedText.match(/\d+$/gi) : decodedText)
+          this.loadSkills(skillset)
+        } catch {
+          console.log("SkillSet from QR-Code not readable!")
+        }
+      }
+
+      const qrCodeFailureCallback = () => {
+        if (showSkill) {
+          this.showSkill = false
+          showSkill = false
+        }
+      }
+
+      html5QrCode.start({facingMode: "environment"}, config, qrCodeSuccessCallback, qrCodeFailureCallback)
+    },
+
+    // async speech2text() {
+    //   speech2text().then(response => console.log("Response S2T: ", response))
+    // },
     async speech2text() {
       try {
         let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
@@ -144,34 +154,32 @@ export default {
         recognition.maxAlternatives = 0
 
         recognition.start()
-        // this.message = "Bitte sprechen ..."
-        // console.log("Message:", this.message)
         console.log('Ready to receive a command.')
 
         let newThis = this
 
         recognition.onresult = function (event) {
           newThis.input = event.results[event.results.length - 1][0].transcript
-          console.log("Input:", newThis.input)
-          console.log("Results:", event.results)
+          // console.log("Input:", newThis.input)
+          // console.log("Results:", event.results)
           // console.log(event.results.length)
-          newThis.test += event.results[event.results.length - 1].isFinal
 
           if (event.results[event.results.length - 1].isFinal) {
             if (newThis.input.match(/Weiter\.*/i)) {
-              console.log('Case: ', 'Weiter')
-              newThis.clicked('next')
+              // console.log('Case: ', 'Weiter')
+              newThis.navigate(1)
             } else if (newThis.input.match(/Zurück\.*/i)) {
-              console.log('Case: ', 'Zurück')
-              newThis.clicked('prev')
-            } else {
-              console.log('nix da:', newThis.input)
-              console.log('nix da:', newThis.input.match(/Weiter\.*/i))
+              // console.log('Case: ', 'Zurück')
+              newThis.navigate(-1)
             }
           }
           setTimeout(() => {
-            recognition.start();
-          }, 50);
+            try {
+              recognition.start()
+            } catch {
+              console.log("Speech recognition already started!")
+            }
+          }, 50)
         }
 
         recognition.onspeechend = function () {
@@ -182,7 +190,7 @@ export default {
 
         recognition.onerror = function (event) {
           // newThis.message = "Error in speech recognition occured, please reload the page!"
-          console.log('Error occurred in recognition: ', +event.error)
+          console.log('Error occurred in recognition: ', event.error)
           newThis.error = event.error
           // newThis.error = "Error in speech recognition occured, please reload the page!"
           newThis.speech2text()
@@ -193,63 +201,49 @@ export default {
       }
     },
 
-    found(value) {
-      console.log(value + "-Marker found")
+    markerFound(skillSetID) {
+      // console.log(skillSetID + "-Marker found")
+      this.loadSkills(skillSetID)
+    },
 
-      if (parseInt(value)) {
+    markerLost() {
+      this.showSkill = false
+      // console.log(skillSetID + "-Marker lost")
+    },
+
+    navigate(direction) {
+      let newSkillNumber = this.skillNumber + direction
+
+      if (newSkillNumber >= 0 && newSkillNumber < this.skillsTotal) {
+        this.skillNumber += direction
+        this.buttonPrev = this.skillNumber === 0
+        this.buttonNext = this.skillNumber === this.skillsTotal - 1
+        this.loadSkills()
+      }
+
+      // console.log((direction === 1 ? "Next" : "Prev") + " -> Skill: " + this.skillNumber)
+    },
+
+    loadSkills(skillSetID) {
+      if (parseInt(skillSetID)) {
         this.showSkill = true
         let sd = new SkillDisplay()
-        sd.getSkillSet(value)
+        sd.getSkillSet(skillSetID)
             .then(response => {
-              console.log("Reponse:", response)
+              // console.log("Response:", response)
               this.skillsTotal = response.skillCount
               this.skills = response.skills
-              console.log("Skills:", this.skills)
+              // console.log("Skills:", this.skills)
               this.links = response.links
 
-              this.loadSkills()
+              this.setSkills()
             }).catch(error => {
           console.log(error)
         })
       }
     },
 
-    lost(value) {
-      this.showSkill = false
-      console.log(value + "-Marker lost")
-    },
-
-    clicked(direction) {
-      if (direction === 'prev') {
-        if (this.skillNumber - 1 <= 0) {
-          this.skillNumber--
-          this.loadSkills()
-          this.buttonPrev = true
-          this.buttonNext = false
-        } else {
-          this.buttonPrev = false
-          this.buttonNext = false
-          this.skillNumber--
-          this.loadSkills()
-        }
-      } else if (direction === 'next') {
-        if (this.skillNumber + 2 >= this.skillsTotal) {
-          this.skillNumber++
-          this.loadSkills()
-          this.buttonNext = true
-          this.buttonPrev = false
-        } else {
-          this.buttonNext = false
-          this.buttonPrev = false
-          this.skillNumber++
-          this.loadSkills()
-        }
-      }
-      // this.skillNumber += (direction === 'next' && this.buttonNext) ? 1 : (direction === 'prev') ? -1 : 0
-      console.log(direction + " -> " + this.skillNumber)
-    },
-
-    loadSkills() {
+    setSkills() {
       if (this.skillsTotal !== 0 && this.skillNumber >= 0 && this.skillNumber + 1 <= this.skillsTotal) {
         let skillTitle = document.getElementById('skillTitle')
         let skillDescription = document.getElementById('skillDescription')
@@ -276,7 +270,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 /* Scrollbar: */
 /* width */
 ::-webkit-scrollbar {
@@ -303,9 +297,17 @@ export default {
 }
 
 
+#reader {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+
 a-scene {
-  display: flex;
-  justify-content: center;
+  position: absolute !important;
+  top: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
 }
 
 p {
@@ -416,12 +418,12 @@ p {
   right: 0;
 }
 
-/*#speechtest {*/
-/*  position: fixed;*/
-/*  bottom: 10px;*/
-/*  left: 10px;*/
-/*}*/
 
+@media screen and (orientation: portrait) {
+  #arjs-video {
+    width: 100% !important;
+  }
+}
 
 @media screen and (max-width: 800px) {
   #skill {

@@ -1,5 +1,7 @@
 require('aframe')
 require('ar.js')
+require('html5-qrcode')
+require('arrive')
 import Vue from 'vue'
 import App from './App.vue'
 import options from '@/config'

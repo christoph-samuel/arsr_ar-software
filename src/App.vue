@@ -1,16 +1,19 @@
 <template>
   <div id="app">
     <Scene/>
+<!--    <QR/>-->
   </div>
 </template>
 
 <script>
 import Scene from './components/Scene.vue'
+// import QR from '@/components/QR'
 
 export default {
   name: 'App',
   components: {
-    Scene
+    Scene,
+    // QR
   },
 }
 </script>

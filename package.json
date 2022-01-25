@@ -10,8 +10,10 @@
   "dependencies": {
     "aframe": "^1.2.0",
     "ar.js": "^2.2.2",
+    "arrive": "^2.4.1",
     "axios": "^0.24.0",
     "core-js": "^3.6.5",
+    "html5-qrcode": "^2.1.6",
     "material-icons-font": "^2.1.0",
     "vue": "^2.6.11",
     "vue-material": "^1.0.0-beta-15"
