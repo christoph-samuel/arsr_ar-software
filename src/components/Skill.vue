@@ -1,20 +1,20 @@
 <template>
   <div>
-    <div id="skillSetContainer">
+    <div id="skillContainer">
       <img id="logoARSR" src="/img/logo_transparent_schwarz.png" alt="Logo ARSR">
       <img id="X" src="/img/X.svg" alt="X" @click="close()">
-      <p id="title">{{ skillSet.name }}</p>
-      <p id="description" v-html="skillSet.description"/>
-      <p id="skillCount">Skills in SkillSet: {{ skillSet.skillCount }}</p>
-      <div id="charts">
-        <radial-chart :percentage="80" info="Self Assessment" color="#32BE8C"/>
-        <radial-chart :percentage="50" info="Educational Verification" color="#4A89C4"/>
-        <radial-chart :percentage="33" info="Practical Expertise" color="#F7BF5D"/>
-        <radial-chart :percentage="98" info="Certification" color="#E04C5D"/>
+      <p id="title">{{ skill.title }}</p>
+      <p id="description" v-html="skill.description"/>
+      <p id="goals" v-html="skill.goals"/>
+      <div id="verification">
+        <verification-checkbox color="#32BE8C" :achieved="skill.progress.self===0"/>
+        <verification-checkbox color="#4A89C4" :achieved="skill.progress.education===0"/>
+        <verification-checkbox color="#F7BF5D" :achieved="skill.progress.business===0"/>
+        <verification-checkbox color="#E04C5D" :achieved="skill.progress.certificate===0"/>
       </div>
       <div id="navigation">
         <img id="navPrev" src="/img/NavigationButton.svg" alt="Previous" @click="navigate(-1)"/>
-        <p id="page">( Fortschritt )</p>
+        <p id="page">( {{ this.skillNumber }}/{{ this.skillsTotal }} )</p>
         <img id="navNext" src="/img/NavigationButton.svg" alt="Next" @click="navigate(1)"/>
       </div>
     </div>
@@ -22,17 +22,27 @@
 </template>
 
 <script>
-import RadialChart from '@/components/RadialChart'
+import VerificationCheckbox from '@/components/VerificationCheckbox'
 
 export default {
-  name: "SkillSet",
+  name: "Skill",
 
   components: {
-    RadialChart
+    VerificationCheckbox
+  },
+
+  beforeUpdate() {
+    // console.log("Skill ", this.skillNumber, ": ", this.skill.title)
+    // console.log("First:", this.skill.progress.self)
+    // console.log("Second:", this.skill.progress.education)
+    // console.log("Third:", this.skill.progress.business)
+    // console.log("Fourth:", this.skill.progress.certificate)
   },
 
   props: {
-    skillSet: Object
+    skill: Object,
+    skillNumber: Number,
+    skillsTotal: Number
   },
 
   methods: {
@@ -48,7 +58,7 @@ export default {
 </script>
 
 <style scoped>
-#skillSetContainer {
+#skillContainer {
   display: inline-block;
   max-height: 100%;
   padding: 30px;
@@ -65,17 +75,6 @@ export default {
   margin-bottom: 30px;
 }
 
-@keyframes logoARSR {
-  to {
-    transform: scale(1);
-  }
-}
-
-#logoARSR {
-  transform: scale(0);
-  animation: logoARSR .5s forwards;
-}
-
 #X {
   position: fixed;
   top: 30px;
@@ -88,14 +87,9 @@ export default {
 #X:hover, #navPrev:hover {
   transform: scale(1.1);
 }
+
 #navNext:hover {
   transform: scale(1.1) rotate(180deg);
-}
-
-@keyframes text {
-  to {
-    opacity: 1;
-  }
 }
 
 #title {
@@ -104,8 +98,6 @@ export default {
   font-weight: 700;
   line-height: 35px;
   margin-bottom: 10px;
-  opacity: 0;
-  animation: text .5s forwards .5s;
 }
 
 #description {
@@ -113,24 +105,21 @@ export default {
   font-size: 20px;
   font-weight: 200;
   margin-bottom: 10px;
-  opacity: 0;
-  animation: text .5s forwards .8s;
 }
 
-#skillCount {
+/* TODO: set max-height when .skillContainer is to big for Website height */
+#goals {
   font-family: 'Inter', sans-serif;
   font-size: 20px;
   font-weight: 300;
   margin-bottom: 20px;
-  opacity: 0;
-  animation: text .5s forwards 1.1s;
 }
 
-#charts {
+#verification {
   display: flex;
   flex-direction: row;
   align-items: baseline;
-  justify-content: space-between;
+  justify-content: space-evenly;
   margin-bottom: 30px;
 }
 
@@ -163,11 +152,12 @@ export default {
 }
 
 @media screen and (orientation: portrait) and (max-width: 768px), screen and (orientation: landscape) and (max-height: 650px) {
-  #skillSetContainer {
-    padding: 20px
+  #skillContainer {
+    padding: 20px;
   }
 
   #logoARSR, #X {
+    display: block;
     height: 20px;
     margin-bottom: 15px;
   }
@@ -189,12 +179,14 @@ export default {
     margin-bottom: 5px;
   }
 
-  #skillCount {
+  /* TODO: set max-height when .skillContainer is too big for Website height */
+  #goals {
     font-size: 15px;
+    line-height: 18px;
     margin-bottom: 10px;
   }
 
-  #charts {
+  #verification {
     margin-bottom: 15px;
   }
 
@@ -208,7 +200,7 @@ export default {
 }
 
 @media screen and (orientation: landscape) and (max-height: 650px) {
-  #skillSetContainer {
+  #skillContainer {
     padding: 15px;
   }
 
@@ -233,12 +225,13 @@ export default {
     line-height: 12px;
   }
 
-  #skillCount {
+  #goals {
     font-size: 12px;
+    line-height: 12px;
     margin-bottom: 5px;
   }
 
-  #charts {
+  #verification {
     margin-bottom: 10px;
   }
 

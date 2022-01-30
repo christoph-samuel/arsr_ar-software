@@ -18,38 +18,12 @@
         </a-gltf-model>
       </a-marker>
 
-      <SkillSet id="skillSet" v-if="showSkill && skillSet.skills !== null" :skill-set="skillSet" @close="closeUI" @navigate="navigate"/>
 
-<!--      <div v-show="showSkill && skills != null && skills.length !== 0" id="skill">-->
-<!--        <div id="skillHeading">-->
-<!--          <img id="logoARSR" src="/img/logo_transparent_schwarz.png" alt="Logo ARSR">-->
-<!--          <p id="skillTitle"></p>-->
-<!--        </div>-->
-<!--        <div id="skillInformation">-->
-<!--          <div id="skillDescriptionDiv">-->
-<!--            <h3 class="skillSubHeadings">Description:</h3>-->
-<!--            <span id="skillDescription"></span>-->
-<!--          </div>-->
-<!--          <div id="skillGoalsDiv">-->
-<!--            <h3 class="skillSubHeadings">Goals:</h3>-->
-<!--            <span id="skillGoals"></span>-->
-<!--          </div>-->
-<!--          <div id="skillResourcesDiv">-->
-<!--            <h3 class="skillSubHeadings">Resources:</h3>-->
-<!--            <span id="skillResources"></span>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div id="skillFooter">-->
-<!--          <md-button class="md-icon-button md-raised" @click="navigate(-1)" :disabled="buttonPrev">-->
-<!--            <md-icon>chevron_left</md-icon>-->
-<!--          </md-button>-->
-<!--          <div v-if="skillsTotal === 0 || skillNumber < 0 || skillNumber+1 > skillsTotal">Nothing to show!</div>-->
-<!--          <div v-else>( {{ skillNumber + 1 }}/{{ skillsTotal }} )</div>-->
-<!--          <md-button class="md-icon-button md-raised" @click="navigate(1)" :disabled="buttonNext">-->
-<!--            <md-icon>chevron_right</md-icon>-->
-<!--          </md-button>-->
-<!--        </div>-->
-<!--      </div>-->
+      <SkillSet id="skillSet" ref="skillSet" v-if="showSkill && skillSet.skills !== null && this.skillNumber === 0"
+                :skill-set="skillSet" @close="closeUI" @navigate="navigate"/>
+      <Skill id="skill" ref="skill" v-else-if="showSkill && skillSet.skills !== null && this.skillNumber !== 0"
+             :skill="skillSet.skills[this.skillNumber-1]" :skill-number="this.skillNumber"
+             :skills-total="this.skillsTotal" @close="closeUI" @navigate="navigate"/>
 
       <md-card id="error" v-show="error !== null" class="md-accent" md-with-hover>
         <md-ripple>
@@ -75,16 +49,16 @@
 
 <script>
 import SkillSet from '@/components/SkillSet'
+import Skill from '@/components/Skill'
 import {SkillDisplay} from '@/services/SkillDisplay'
-// import {speech2text} from '@/services/Speech2Text'
 import {Html5Qrcode} from 'html5-qrcode'
-// import {Html5QrcodeScanner} from 'html5-qrcode'
 
 export default {
   name: 'Scene',
 
   components: {
-    SkillSet
+    SkillSet,
+    Skill
   },
 
   data: () => {
@@ -93,8 +67,6 @@ export default {
       showSkill: false,
       skillNumber: 0,
       skillsTotal: 0,
-      buttonPrev: true,
-      buttonNext: false,
       input: "",
       error: null
     }
@@ -111,7 +83,7 @@ export default {
     })
 
     document.arrive("#arjs-video", () => {
-      observer.observe(document.getElementById('arjs-video'), { attributes : true, attributeFilter : ['style'] })
+      observer.observe(document.getElementById('arjs-video'), {attributes: true, attributeFilter: ['style']})
     });
   },
 
@@ -201,18 +173,16 @@ export default {
       this.showSkill = false
     },
 
-    navigate(value) {
-      console.log(value)
-      // let newSkillNumber = this.skillNumber + direction
-      //
-      // if (newSkillNumber >= 0 && newSkillNumber < this.skillsTotal) {
-      //   this.skillNumber += direction
-      //   this.buttonPrev = this.skillNumber === 0
-      //   this.buttonNext = this.skillNumber === this.skillsTotal - 1
-      //   this.loadSkills()
-      // }
+    navigate(direction) {
+      let newSkillNumber = this.skillNumber + direction
 
-      // console.log((direction === 1 ? "Next" : "Prev") + " -> Skill: " + this.skillNumber)
+      if (newSkillNumber >= 0 && newSkillNumber <= this.skillsTotal) {
+        this.skillNumber += direction
+      } else if (newSkillNumber < 0) {
+        this.skillNumber = this.skillsTotal
+      } else if (newSkillNumber > this.skillsTotal) {
+        this.skillNumber = 0
+      }
     },
 
     loadSkills(skillSetID) {
@@ -222,6 +192,8 @@ export default {
         sd.getSkillSet(skillSetID)
             .then(response => {
               this.skillSet = response
+              this.skillNumber = 0
+              this.skillsTotal = response.skillCount
             }).catch(error => {
           console.log(error)
         })
@@ -236,34 +208,7 @@ export default {
 
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
-/* Scrollbar: */
-/* width */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 50%;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  /*background: #fff;*/
-  /*border-radius: 12px;*/
-  visibility: hidden;
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #000;
-  border-radius: 12px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #000;
-}
-
-
 #reader {
   height: 100% !important;
   width: 100% !important;
@@ -281,101 +226,17 @@ p {
   margin: 0;
 }
 
-#skillSet {
-    z-index: 10;
-    position: fixed;
-    top: 40px;
+#skillSet, #skill {
+  z-index: 10;
+  position: fixed;
+  top: 40px;
+  bottom: 40px;
+  width: 60vw;
 }
-
-/*#skill {*/
-/*  z-index: 10;*/
-/*  width: 65vw;*/
-/*  height: 40vh;*/
-/*  overflow-y: scroll;*/
-/*  position: sticky;*/
-/*  top: 3vh;*/
-/*  padding: 15px 15px 0 15px;*/
-/*  display: flex;*/
-/*  flex-direction: column;*/
-/*  align-items: center;*/
-/*  background-color: rgba(255, 255, 255, 0.75);*/
-/*  !*border: 1px solid black;*!*/
-/*  border-radius: 12px;*/
-/*  box-shadow: 10px 20px 50px -20px rgba(0, 0, 0, 0.8);*/
-/*}*/
-
-/*#skill > div {*/
-/*  margin-bottom: 20px;*/
-/*}*/
-
-/*#skillHeading {*/
-/*  display: flex;*/
-/*  flex-direction: column;*/
-/*  align-items: center;*/
-/*}*/
-
-/*#logoARSR {*/
-/*  display: block;*/
-/*  width: 100px;*/
-/*  position: absolute;*/
-/*  top: 10px;*/
-/*  left: 20px;*/
-/*}*/
-
-/*#skillTitle {*/
-/*  font-family: 'Montserrat', sans-serif;*/
-/*  font-weight: 800;*/
-/*  font-size: 25px;*/
-/*}*/
-
-/*#skillInformation {*/
-/*  display: grid;*/
-/*  grid-template-columns: 30% 30% 30%;*/
-/*  justify-content: space-evenly;*/
-/*}*/
-
-/*#skillInformation > div {*/
-/*  font-family: 'Inter', sans-serif;*/
-/*  font-weight: 400;*/
-/*  padding: 15px 30px 0 15px;*/
-/*  background-color: rgb(255, 255, 255);*/
-/*  !*border: 1px solid black;*!*/
-/*  border-radius: 12px;*/
-/*  box-shadow: 10px 20px 50px -20px rgba(0, 0, 0, 0.8);*/
-/*}*/
-
-/*.skillSubHeadings {*/
-/*  font-family: 'Montserrat', sans-serif;*/
-/*  font-weight: 400;*/
-/*  font-size: 20px;*/
-/*  text-decoration: underline;*/
-/*  margin-top: 0;*/
-/*}*/
-
-/*#skillResources {*/
-/*  word-break: break-all;*/
-/*}*/
-
-/*#skillInformation > div > span {*/
-/*  position: relative;*/
-/*  left: 15px;*/
-/*}*/
-
-/*#skillFooter {*/
-/*  font-family: 'Inter', sans-serif;*/
-/*  font-weight: 700;*/
-/*  position: sticky;*/
-/*  bottom: 10px;*/
-/*  margin-top: auto;*/
-/*  width: 100%;*/
-/*  display: flex;*/
-/*  justify-content: space-between;*/
-/*  align-items: center;*/
-/*}*/
 
 #error {
   width: max-content;
-  min-width: 150px;
+  min-width: 250px;
   position: fixed;
   z-index: 100;
   top: 10px;
@@ -398,33 +259,23 @@ p {
   }
 }
 
-@media screen and (max-width: 800px) {
-  /*#skill {*/
-  /*  width: 90vw;*/
-  /*}*/
+@media screen and (orientation: portrait) and (max-width: 768px) {
+  #skillSet, #skill {
+    top: 20px;
+    bottom: 20px;
+    width: 85vw;
+  }
 }
 
-@media screen and (max-height: 750px) {
-  /*#skill {*/
-  /*  width: 90vw;*/
-  /*  height: 60vh;*/
-  /*}*/
+@media screen and (orientation: landscape) and (max-height: 650px) {
+  #skillSet, #skill {
+    top: 20px;
+    bottom: 20px;
+    width: 75vw;
+  }
 }
 
-@media screen and (max-width: 600px) {
-  /*#skill {*/
-  /*  padding-top: 0;*/
-  /*}*/
-
-  /*#logoARSR {*/
-  /*  display: block;*/
-  /*  width: 100px;*/
-  /*  position: relative;*/
-  /*  top: 0;*/
-  /*  left: 0;*/
-  /*  margin-bottom: 10px;*/
-  /*}*/
-
+@media screen and (max-width: 576px) {
   #error {
     width: 90vw;
   }

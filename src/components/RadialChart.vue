@@ -7,11 +7,8 @@
         <text x='50%' y='50%' alignment-baseline="central" text-anchor="middle" id='percentage'>{{ percentage }}%</text>
       </g>
     </svg>
-    <p id="info">{{ info }}</p>
+    <p class="info">{{ info }}</p>
   </div>
-  <!--  <div class="container">-->
-  <!--    <md-progress-spinner ref="circle" md- md-mode="determinate" :md-value="percentage"></md-progress-spinner>-->
-  <!--  </div>-->
 </template>
 
 <script>
@@ -23,16 +20,28 @@ export default {
       type: Number,
       required: true
     },
-    info: String,
-    color: String
+    info: {
+      type: String,
+      default: "Unknown"
+    },
+    color: {
+      type: String,
+      default: '#000'
+    }
+  },
+
+  data: () => {
+    return {
+      radiusInterval: 0
+    }
   },
 
   mounted() {
-    this.$refs.front.style.stroke = this.color ? this.color : "#000"
+    this.$refs.front.style.stroke = this.color
 
     // TODO: Use of Built-in function instead of setInterval for variable changes
     let radius = 0
-    setInterval(() => {
+    this.radiusInterval = setInterval(() => {
       try {
         if (this.$refs.front.r.baseVal.value !== radius) {
           radius = this.$refs.front.r.baseVal.value
@@ -42,34 +51,39 @@ export default {
         console.log(e.message)
       }
     }, 250)
+  },
+
+  beforeDestroy() {
+    try {
+      clearInterval(this.radiusInterval)
+    } catch (e) {
+      console.log(e.message)
+    }
   }
 }
 </script>
 
 <style scoped>
-svg {
-  aspect-ratio: 1 / 1;
-}
-
 .container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-bottom: 30px;
 }
 
 .container .chart-container {
+  aspect-ratio: 1 / 1;
   padding: 10px;
 }
 
 .container .chart-container .back {
+  opacity: 0;
   stroke: #e2e2e2;
   stroke-width: 10;
 }
 
 .container .chart-container .front {
-  stroke: #08415c;
+  opacity: 0;
   stroke-width: 10;
   stroke-linecap: round;
   stroke-dasharray: 0, 1000000;
@@ -78,10 +92,17 @@ svg {
 }
 
 .container .chart-container .text {
+  opacity: 0;
   font-family: 'Inter', sans-serif;
   font-weight: 700;
   font-size: 25px;
   fill: #000;
+}
+
+@keyframes show {
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fill {
@@ -97,26 +118,72 @@ svg {
   }
 }
 
+.back, .text, .info {
+  animation: show .5s forwards 1.4s;
+}
+
 .front {
-  /*On top of all other styling elements*/
-  animation: fill 2s reverse;
+  animation: show .5s forwards 1.4s, fill 2s reverse 1.4s;
 }
 
 .text {
-  /*On top of all other styling elements*/
-  opacity: 0;
   transform: translateY(30%);
-  animation: display 2s forwards;
+  animation: display 2s forwards 2s;
 }
 
-/*.md-progress-spinner-circle {*/
-/*  stroke: #f00 !important;*/
-/*}*/
-
-#info {
+.info {
+  opacity: 0;
   font-family: 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 300;
   text-align: center;
+}
+
+@media screen and (max-width: 992px) {
+  .container .chart-container {
+    padding: 5px;
+  }
+
+  .container .chart-container .front {
+    stroke-width: 7;
+  }
+
+  .container .chart-container .back {
+    stroke-width: 7;
+  }
+
+  .container .chart-container .text {
+    font-size: 20px;
+  }
+}
+
+@media screen and (orientation: portrait) and (max-width: 768px), screen and (orientation: landscape) and (max-height: 650px) {
+  .container .chart-container {
+    padding: 0;
+  }
+
+  .container .chart-container .back {
+    stroke-width: 5;
+  }
+
+  .container .chart-container .front {
+    stroke-width: 5;
+  }
+
+  .container .chart-container .text {
+    font-size: 15px;
+  }
+
+  .info {
+    font-size: 10px;
+    line-height: 10px;
+  }
+}
+
+@media screen and (orientation: landscape) and (max-height: 650px) {
+  .container .chart-container {
+    width: 50%;
+    height: 50%;
+  }
 }
 </style>

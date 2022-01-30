@@ -62,3 +62,27 @@ body, .md-app {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+
+/* Scrollbar: */
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #e2e2e2;
+    border-radius: 12px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #6EC1E4;
+    border-radius: 12px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #61AAC9;
+}
