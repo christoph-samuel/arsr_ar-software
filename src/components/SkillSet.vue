@@ -77,7 +77,7 @@ export default {
 }
 
 #X {
-  position: fixed;
+  position: absolute;
   top: 30px;
   right: 30px;
   transition: .3s;
@@ -88,6 +88,7 @@ export default {
 #X:hover, #navPrev:hover {
   transform: scale(1.1);
 }
+
 #navNext:hover {
   transform: scale(1.1) rotate(180deg);
 }
@@ -129,7 +130,7 @@ export default {
 #charts {
   display: flex;
   flex-direction: row;
-  align-items: baseline;
+  align-items: flex-start;
   justify-content: space-between;
   margin-bottom: 30px;
 }

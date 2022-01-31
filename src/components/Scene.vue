@@ -68,12 +68,13 @@ export default {
       skillNumber: 0,
       skillsTotal: 0,
       input: "",
-      error: null
+      error: null,
+      skillSetID: null
     }
   },
 
   mounted() {
-    // this.speech2text()
+    this.speech2text()
     this.qrCode()
 
     let observer = new MutationObserver((mutations) => {
@@ -90,14 +91,17 @@ export default {
   methods: {
     qrCode() {
       let config = {fps: 5}
-      let skillset
+      let skillSetID
 
       const html5QrCode = new Html5Qrcode("reader")
 
       const qrCodeSuccessCallback = (decodedText) => {
         try {
-          skillset = parseInt(isNaN(parseInt(decodedText)) ? decodedText.match(/\d+$/gi) : decodedText)
-          this.loadSkills(skillset)
+          skillSetID = parseInt(isNaN(parseInt(decodedText)) ? decodedText.match(/\d+$/gi) : decodedText)
+          if (skillSetID !== this.skillSetID) {
+            this.skillSetID = skillSetID
+            this.loadSkills(skillSetID)
+          }
         } catch {
           console.log("SkillSet from QR-Code not readable!")
         }
@@ -171,6 +175,7 @@ export default {
 
     closeUI() {
       this.showSkill = false
+      this.skillSetID = null
     },
 
     navigate(direction) {
@@ -224,6 +229,10 @@ a-scene {
 
 p {
   margin: 0;
+}
+
+.a-canvas.a-grab-cursor, .a-canvas.a-grab-cursor:hover {
+  cursor: default !important;
 }
 
 #skillSet, #skill {

@@ -76,7 +76,7 @@ export default {
 }
 
 #X {
-  position: fixed;
+  position: absolute;
   top: 30px;
   right: 30px;
   transition: .3s;
