@@ -86,3 +86,15 @@ body, .md-app {
 ::-webkit-scrollbar-thumb:hover {
     background: #61AAC9;
 }
+
+
+/* Text Selection Color */
+::-moz-selection { /* Code for Firefox */
+    color: white !important;
+    background: #6EC1E4 !important;
+}
+
+::selection {
+    color: white !important;
+    background: #6EC1E4 !important;
+}
