@@ -130,6 +130,7 @@ export default {
 
         recognition.onresult = function (event) {
           newThis.input = event.results[event.results.length - 1][0].transcript
+          console.log(newThis.input)
 
           if (event.results[event.results.length - 1].isFinal) {
             if (newThis.input.match(/Weiter\.*/i)) {
@@ -140,14 +141,19 @@ export default {
           }
         }
 
-        recognition.onerror = function (event) {
-          console.log('Error occurred in recognition: ', event.error)
+        recognition.onspeechend = function () {
+          // this.message = ""
+          console.log("Restarting Speech2Text")
+          newThis.speech2text()
+        }
+
+        recognition.onerror = function () {
+          console.log('Error occurred in recognition')
           newThis.speech2text()
         }
       } catch (e) {
-        // this.error = e.message
         console.log(e.message)
-        this.error = "Spracherkennung wird nicht unterstützt!"
+        this.error = "Speech Recognition is not supported!"
       }
     },
 
