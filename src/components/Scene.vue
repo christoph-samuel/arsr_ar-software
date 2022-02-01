@@ -116,8 +116,6 @@ export default {
     async speech2text() {
       try {
         let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-        // var SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList
-        // var SpeechRecognitionEvent = window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent
 
         let recognition = new SpeechRecognition()
         recognition.continuous = true
@@ -132,44 +130,24 @@ export default {
 
         recognition.onresult = function (event) {
           newThis.input = event.results[event.results.length - 1][0].transcript
-          // console.log("Input:", newThis.input)
-          // console.log("Results:", event.results)
-          // console.log(event.results.length)
 
           if (event.results[event.results.length - 1].isFinal) {
             if (newThis.input.match(/Weiter\.*/i)) {
-              // console.log('Case: ', 'Weiter')
               newThis.navigate(1)
             } else if (newThis.input.match(/Zurück\.*/i)) {
-              // console.log('Case: ', 'Zurück')
               newThis.navigate(-1)
             }
           }
-          setTimeout(() => {
-            try {
-              recognition.start()
-            } catch {
-              console.log("Speech recognition already started!")
-            }
-          }, 50)
-        }
-
-        recognition.onspeechend = function () {
-          // this.message = ""
-          // console.log("Message:", this.message)
-          newThis.speech2text()
         }
 
         recognition.onerror = function (event) {
-          // newThis.message = "Error in speech recognition occured, please reload the page!"
           console.log('Error occurred in recognition: ', event.error)
-          // newThis.error = "Error in speech recognition occured, please reload the page!"
           newThis.speech2text()
         }
       } catch (e) {
         // this.error = e.message
         console.log(e.message)
-        // this.error = "Spracherkennung wird nicht unterstützt!"
+        this.error = "Spracherkennung wird nicht unterstützt!"
       }
     },
 
