@@ -23,26 +23,10 @@
                 :skill-set="skillSet" @close="closeUI" @navigate="navigate"/>
       <Skill id="skill" ref="skill" v-else-if="showSkill && skillSet.skills !== null && this.skillNumber !== 0"
              :skill="skillSet.skills[this.skillNumber-1]" :skill-number="this.skillNumber"
-             :skills-total="this.skillsTotal" @close="closeUI" @navigate="navigate"/>
+             :skills-total="this.skillsTotal" @close="closeUI" @navigate="navigate" @achieve="achieve"/>
 
-      <md-card id="error" v-show="error !== null" class="md-accent" md-with-hover>
-        <md-ripple>
-          <md-card-header>
-            <div class="md-title">Error</div>
-            <div class="md-subhead">Message:</div>
-          </md-card-header>
+      <Message id="message" v-if="message" :message="message" :color="messageColor" @close="closeMessage"/>
 
-          <md-card-content>
-            {{ error }}
-          </md-card-content>
-
-          <md-card-actions id="errorActions">
-            <md-button class="md-icon-button" @click="removeError">
-              <md-icon>close</md-icon>
-            </md-button>
-          </md-card-actions>
-        </md-ripple>
-      </md-card>
     </a-scene>
   </div>
 </template>
@@ -50,6 +34,7 @@
 <script>
 import SkillSet from '@/components/SkillSet'
 import Skill from '@/components/Skill'
+import Message from '@/components/Message'
 import {SkillDisplay} from '@/services/SkillDisplay'
 import {Html5Qrcode} from 'html5-qrcode'
 
@@ -58,18 +43,20 @@ export default {
 
   components: {
     SkillSet,
-    Skill
+    Skill,
+    Message
   },
 
   data: () => {
     return {
       skillSet: {},
-      showSkill: false,
+      skillSetID: null,
       skillNumber: 0,
       skillsTotal: 0,
+      showSkill: false,
       input: "",
-      error: null,
-      skillSetID: null
+      message: null,
+      messageColor: null
     }
   },
 
@@ -89,6 +76,21 @@ export default {
   },
 
   methods: {
+    loadSkills(skillSetID) {
+      if (parseInt(skillSetID)) {
+        this.showSkill = true
+        let sd = new SkillDisplay()
+        sd.getSkillSet(skillSetID)
+            .then(response => {
+              this.skillSet = response
+              this.skillNumber = 0
+              this.skillsTotal = response.skillCount
+            }).catch(error => {
+          console.log(error)
+        })
+      }
+    },
+
     qrCode() {
       let config = {fps: 5}
       let skillSetID
@@ -174,23 +176,14 @@ export default {
       }
     },
 
-    loadSkills(skillSetID) {
-      if (parseInt(skillSetID)) {
-        this.showSkill = true
-        let sd = new SkillDisplay()
-        sd.getSkillSet(skillSetID)
-            .then(response => {
-              this.skillSet = response
-              this.skillNumber = 0
-              this.skillsTotal = response.skillCount
-            }).catch(error => {
-          console.log(error)
-        })
-      }
+    achieve(verification) {
+      this.message = null
+      this.message = "Verification of '" + verification + "' sent to SkillDisplay!"
+      this.messageColor = "#28a745"
     },
 
-    removeError() {
-      this.error = null
+    closeMessage() {
+      this.message = null
     }
   }
 }
@@ -227,22 +220,14 @@ p {
   width: 60vw;
 }
 
-#error {
+#message {
   width: max-content;
   min-width: 250px;
+  max-width: 50vw;
   position: fixed;
   z-index: 100;
   top: 10px;
-  right: 0;
-  left: 0;
   margin: 0 auto;
-  box-shadow: 0 0 50px -5px rgba(0, 0, 0, 0.8);
-}
-
-#errorActions {
-  position: absolute;
-  top: 0;
-  right: 0;
 }
 
 

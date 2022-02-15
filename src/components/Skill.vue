@@ -7,10 +7,10 @@
       <p id="description" v-html="skill.description"/>
       <p id="goals" v-html="skill.goals"/>
       <div id="verification">
-        <verification-checkbox color="#32BE8C" :achieved="skill.progress.self===0"/>
-        <verification-checkbox color="#4A89C4" :achieved="skill.progress.education===0"/>
-        <verification-checkbox color="#F7BF5D" :achieved="skill.progress.business===0"/>
-        <verification-checkbox color="#E04C5D" :achieved="skill.progress.certificate===0"/>
+        <verification-checkbox color="#32BE8C" :achieved="skill.progress.self===0" @achieve="achieve('Self Assessment')"/>
+        <verification-checkbox color="#4A89C4" :achieved="skill.progress.education===0" @achieve="achieve('Educational Verification')"/>
+        <verification-checkbox color="#F7BF5D" :achieved="skill.progress.business===0" @achieve="achieve('Practical Expertise')"/>
+        <verification-checkbox color="#E04C5D" :achieved="skill.progress.certificate===0" @achieve="achieve('Certification')"/>
       </div>
       <div id="navigation">
         <img id="navPrev" src="/img/NavigationButton.svg" alt="Previous" @click="navigate(-1)"/>
@@ -52,6 +52,10 @@ export default {
 
     navigate(direction) {
       this.$emit('navigate', direction)
+    },
+
+    achieve(verification) {
+      this.$emit('achieve', verification)
     }
   }
 }
