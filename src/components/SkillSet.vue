@@ -14,7 +14,7 @@
       </div>
       <div id="navigation">
         <img id="navPrev" src="/img/NavigationButton.svg" alt="Previous" @click="navigate(-1)"/>
-        <p id="page">( Fortschritt )</p>
+        <p id="page">SkillSet ( Fortschritt )</p>
         <img id="navNext" src="/img/NavigationButton.svg" alt="Next" @click="navigate(1)"/>
       </div>
     </div>
@@ -55,7 +55,7 @@ export default {
   background-color: rgba(255, 255, 255, 0.8);
   border: none;
   border-radius: 10px;
-  box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(10px) brightness(100%);
 }
 
@@ -82,7 +82,7 @@ export default {
   right: 30px;
   transition: .3s;
   cursor: pointer;
-  filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.4));
 }
 
 #X:hover, #navPrev:hover {
@@ -148,7 +148,7 @@ export default {
   height: 60px;
   transition: .3s;
   cursor: pointer;
-  filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.4));
 }
 
 #page {
@@ -160,7 +160,7 @@ export default {
 
 #navNext {
   transform: rotate(180deg);
-  filter: drop-shadow(-2px -5px 5px rgba(0, 0, 0, 0.2)) !important;
+  filter: drop-shadow(-2px -5px 5px rgba(0, 0, 0, 0.4)) !important;
 }
 
 @media screen and (orientation: portrait) and (max-width: 768px), screen and (orientation: landscape) and (max-height: 650px) {

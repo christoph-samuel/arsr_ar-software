@@ -14,7 +14,7 @@
       </div>
       <div id="navigation">
         <img id="navPrev" src="/img/NavigationButton.svg" alt="Previous" @click="navigate(-1)"/>
-        <p id="page">( {{ this.skillNumber }}/{{ this.skillsTotal }} )</p>
+        <p id="page">Skill ( {{ this.skillNumber }}/{{ this.skillsTotal }} )</p>
         <img id="navNext" src="/img/NavigationButton.svg" alt="Next" @click="navigate(1)"/>
       </div>
     </div>
@@ -33,10 +33,10 @@ export default {
 
   beforeUpdate() {
     // console.log("Skill ", this.skillNumber, ": ", this.skill.title)
-    // console.log("First:", this.skill.progress.self)
-    // console.log("Second:", this.skill.progress.education)
-    // console.log("Third:", this.skill.progress.business)
-    // console.log("Fourth:", this.skill.progress.certificate)
+    // console.log("Self:", this.skill.progress.self)
+    // console.log("Education:", this.skill.progress.education)
+    // console.log("Business:", this.skill.progress.business)
+    // console.log("Certificate:", this.skill.progress.certificate)
   },
 
   props: {
@@ -55,7 +55,7 @@ export default {
     },
 
     achieve(verification) {
-      this.$emit('achieve', verification)
+      this.$emit('achieve', verification, this.skillNumber)
     }
   }
 }
@@ -69,7 +69,7 @@ export default {
   background-color: rgba(255, 255, 255, 0.8);
   border: none;
   border-radius: 10px;
-  box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(10px) brightness(100%);
 }
 
@@ -85,7 +85,7 @@ export default {
   right: 30px;
   transition: .3s;
   cursor: pointer;
-  filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.4));
 }
 
 #X:hover, #navPrev:hover {
@@ -140,7 +140,7 @@ export default {
   height: 60px;
   transition: .3s;
   cursor: pointer;
-  filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.4));
 }
 
 #page {
@@ -152,7 +152,7 @@ export default {
 
 #navNext {
   transform: rotate(180deg);
-  filter: drop-shadow(-2px -5px 5px rgba(0, 0, 0, 0.2)) !important;
+  filter: drop-shadow(-2px -5px 5px rgba(0, 0, 0, 0.4)) !important;
 }
 
 @media screen and (orientation: portrait) and (max-width: 768px), screen and (orientation: landscape) and (max-height: 650px) {

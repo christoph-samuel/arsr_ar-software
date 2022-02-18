@@ -121,7 +121,7 @@ export default {
 
         let recognition = new SpeechRecognition()
         recognition.continuous = true
-        recognition.lang = 'de'
+        recognition.lang = 'en'
         recognition.interimResults = true
         recognition.maxAlternatives = 0
 
@@ -135,10 +135,24 @@ export default {
           console.log(newThis.input)
 
           if (event.results[event.results.length - 1].isFinal) {
-            if (newThis.input.match(/Weiter\.*/i)) {
+            if (newThis.input.match(/Next\.*/i)) {
               newThis.navigate(1)
-            } else if (newThis.input.match(/Zurück\.*/i)) {
+            } else if (newThis.input.match(/Following\.*/i)) {
+              newThis.navigate(1)
+            } else if (newThis.input.match(/Back\.*/i)) {
               newThis.navigate(-1)
+            } else if (newThis.input.match(/Previous\.*/i)) {
+              newThis.navigate(-1)
+            } else if (newThis.input.match(/Close\.*/i)) {
+              newThis.closeUI()
+            // } else if (newThis.input.match(/Verify Self Assessment\.*/i)) {
+            //   newThis.achieve('Self Assessment')
+            // } else if (newThis.input.match(/Verify Educational Verification\.*/i)) {
+            //   newThis.achieve('Educational Verification')
+            // } else if (newThis.input.match(/Verify Practical Expertise\.*/i)) {
+            //   newThis.achieve('Practical Expertise')
+            // } else if (newThis.input.match(/Verify Certification\.*/i)) {
+            //   newThis.achieve('Certification')
             }
           }
         }
@@ -162,6 +176,7 @@ export default {
     closeUI() {
       this.showSkill = false
       this.skillSetID = null
+      this.skillSet = {}
     },
 
     navigate(direction) {
@@ -176,9 +191,9 @@ export default {
       }
     },
 
-    achieve(verification) {
+    achieve(verification, skillNumber) {
       this.message = null
-      this.message = "Verification of '" + verification + "' sent to SkillDisplay!"
+      this.message = "Request for Verification of '" + verification + "' from Skill " + skillNumber + " sent to SkillDisplay!"
       this.messageColor = "#28a745"
     },
 

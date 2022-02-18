@@ -33,6 +33,15 @@ export default {
     }
   },
 
+  watch: {
+    achieved: function (val) {
+      if (!val) {
+        this.$refs["chart-container"].style.cursor = "pointer"
+        this.$refs["chart-container"].style.filter = "drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.4))"
+      }
+    }
+  },
+
   mounted() {
     this.$refs.back.style.stroke = this.color
   },
@@ -62,7 +71,8 @@ export default {
   aspect-ratio: 1 / 1;
   padding: 10px;
   cursor: pointer;
-  filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.4));
+  transition: .5s;
 }
 
 .container .chart-container .back {
