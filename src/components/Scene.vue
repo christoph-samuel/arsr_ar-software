@@ -99,7 +99,7 @@ export default {
 
       const qrCodeSuccessCallback = (decodedText) => {
         try {
-          skillSetID = parseInt(isNaN(parseInt(decodedText)) ? decodedText.match(/\d+$/gi) : decodedText)
+          skillSetID = parseInt(isNaN(parseInt(decodedText)) ? decodedText.replace(/^https:\/\/my\.skilldisplay\.eu\/skillset\/(\d+)$/gi, "$1") : decodedText)
           if (skillSetID !== this.skillSetID) {
             this.skillSetID = skillSetID
             this.loadSkills(skillSetID)
