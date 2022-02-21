@@ -118,8 +118,16 @@ export default {
     async speech2text() {
       try {
         let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+        let SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList
+
+        let commands = [ 'Next' , 'Following' , 'Back', 'Previous', 'Close'];
+        let grammar = '#JSGF V1.0; grammar commands; public <command> = ' + commands.join(' | ') + ' ;'
+
+        let speechRecognitionList = new SpeechGrammarList()
+        speechRecognitionList.addFromString(grammar, 1);
 
         let recognition = new SpeechRecognition()
+        recognition.grammars = speechRecognitionList;
         recognition.continuous = true
         recognition.lang = 'en'
         recognition.interimResults = true
