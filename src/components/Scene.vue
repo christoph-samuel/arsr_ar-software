@@ -140,7 +140,6 @@ export default {
 
         recognition.onresult = function (event) {
           newThis.input = event.results[event.results.length - 1][0].transcript
-          console.log(newThis.input)
 
           if (event.results[event.results.length - 1].isFinal) {
             if (newThis.input.match(/Next\.*/i)) {
