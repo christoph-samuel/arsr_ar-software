@@ -1,7 +1,7 @@
 <template>
   <div style="width: 100%; height: 100%">
     <div id="reader"></div>
-    <a-scene arjs="debugUIEnabled: false;" keyboard-shortcuts>
+    <a-scene embedded arjs>
       <a-assets>
         <a-asset-item id="logoGLTF" src="/3d/logo.glb"></a-asset-item>
         <img id="Content-Paste-Go" src="/img/Content-Paste-Go.png">

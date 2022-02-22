@@ -1,5 +1,5 @@
 require('aframe')
-require('ar.js')
+require('@ar-js-org/ar.js')
 require('html5-qrcode')
 require('arrive')
 import Vue from 'vue'
