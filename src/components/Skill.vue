@@ -113,7 +113,6 @@ export default {
   margin-bottom: 10px;
 }
 
-/* TODO: set max-height when .skillContainer is to big for Website height */
 #goals {
   height: max-content;
   max-height: 40vh;
