@@ -1,20 +1,21 @@
 <template>
   <div class='container'>
-    <svg width='80%' height='80%' class='chart-container' ref="chart-container" @click="achieve">
+    <svg width='60%' height='60%' class='chart-container' ref="chart-container" @click="achieve">
       <circle cx='50%' cy='50%' r='40%' class='back' ref='back' fill='none'/>
-      <svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="-6 -6 36 36" width="100%"
+      <svg xmlns="http://www.w3.org/2000/svg" height="100%" width="100%" viewBox="-6 -6 36 36"
            fill="#e2e2e2" class="check">
         <path d="M0 0h24v24H0V0z" fill="none"/>
         <path
             d="M9 16.2l-3.5-3.5c-.39-.39-1.01-.39-1.4 0-.39.39-.39 1.01 0 1.4l4.19 4.19c.39.39 1.02.39 1.41 0L20.3 7.7c.39-.39.39-1.01 0-1.4-.39-.39-1.01-.39-1.4 0L9 16.2z"/>
       </svg>
-      <svg v-if="achieved" xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="-6 -6 36 36" width="100%"
+      <svg v-if="achieved" xmlns="http://www.w3.org/2000/svg" height="100%" width="100%" viewBox="-6 -6 36 36"
            :fill="color" class="done">
         <path d="M0 0h24v24H0V0z" fill="none"/>
         <path
             d="M9 16.2l-3.5-3.5c-.39-.39-1.01-.39-1.4 0-.39.39-.39 1.01 0 1.4l4.19 4.19c.39.39 1.02.39 1.41 0L20.3 7.7c.39-.39.39-1.01 0-1.4-.39-.39-1.01-.39-1.4 0L9 16.2z"/>
       </svg>
     </svg>
+    <p class="info">{{ info }}</p>
   </div>
 </template>
 
@@ -30,7 +31,11 @@ export default {
     achieved: {
       type: Boolean,
       required: true
-    }
+    },
+    info: {
+      type: String,
+      default: "Unknown"
+    },
   },
 
   watch: {
@@ -76,7 +81,7 @@ export default {
 }
 
 .container .chart-container .back {
-  stroke-width: 10;
+  stroke-width: 8;
 }
 
 @keyframes show {
@@ -88,6 +93,13 @@ export default {
 .done {
   clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%);
   animation: show 1.5s forwards;
+}
+
+.info {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  text-align: center;
 }
 
 @media screen and (max-width: 992px) {
@@ -108,12 +120,17 @@ export default {
   .container .chart-container .back {
     stroke-width: 5;
   }
+
+  .info {
+    font-size: 10px;
+    line-height: 10px;
+  }
 }
 
 @media screen and (orientation: landscape) and (max-height: 650px) {
   .container .chart-container {
-    width: 50%;
-    height: 50%;
+    width: 35%;
+    height: 35%;
   }
 }
 </style>

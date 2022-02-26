@@ -7,10 +7,10 @@
       <p id="description" v-html="skill.description"/>
       <p id="goals" v-html="skill.goals"/>
       <div id="verification">
-        <verification-checkbox color="#32BE8C" :achieved="skill.progress.self===0" @achieve="achieve('Self Assessment')"/>
-        <verification-checkbox color="#4A89C4" :achieved="skill.progress.education===0" @achieve="achieve('Educational Verification')"/>
-        <verification-checkbox color="#F7BF5D" :achieved="skill.progress.business===0" @achieve="achieve('Practical Expertise')"/>
-        <verification-checkbox color="#E04C5D" :achieved="skill.progress.certificate===0" @achieve="achieve('Certification')"/>
+        <verification-checkbox color="#32BE8C" :achieved="skill.progress.self===0" @achieve="achieve('Self Assessment')" info="Self Assessment"/>
+        <verification-checkbox color="#4A89C4" :achieved="skill.progress.education===0" @achieve="achieve('Educational Verification')" info="Educational Verification"/>
+        <verification-checkbox color="#F7BF5D" :achieved="skill.progress.business===0" @achieve="achieve('Practical Expertise')" info="Practical Expertise"/>
+        <verification-checkbox color="#E04C5D" :achieved="skill.progress.certificate===0" @achieve="achieve('Certification')" info="Certification"/>
       </div>
       <div id="navigation">
         <img id="navPrev" src="/img/NavigationButton.svg" alt="Previous" @click="navigate(-1)"/>
@@ -97,6 +97,7 @@ export default {
 }
 
 #title {
+  height: max-content;
   font-family: 'Montserrat', sans-serif;
   font-size: 35px;
   font-weight: 700;
@@ -105,6 +106,7 @@ export default {
 }
 
 #description {
+  height: max-content;
   font-family: 'Inter', sans-serif;
   font-size: 20px;
   font-weight: 200;
@@ -113,6 +115,9 @@ export default {
 
 /* TODO: set max-height when .skillContainer is to big for Website height */
 #goals {
+  height: max-content;
+  max-height: 40vh;
+  overflow-y: auto;
   font-family: 'Inter', sans-serif;
   font-size: 20px;
   font-weight: 300;
@@ -120,6 +125,7 @@ export default {
 }
 
 #verification {
+  height: max-content;
   display: flex;
   flex-direction: row;
   align-items: baseline;
@@ -128,6 +134,7 @@ export default {
 }
 
 #navigation {
+  height: max-content;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -183,7 +190,6 @@ export default {
     margin-bottom: 5px;
   }
 
-  /* TODO: set max-height when .skillContainer is too big for Website height */
   #goals {
     font-size: 15px;
     line-height: 18px;
@@ -230,6 +236,7 @@ export default {
   }
 
   #goals {
+    max-height: 20vh;
     font-size: 12px;
     line-height: 12px;
     margin-bottom: 5px;
