@@ -31,14 +31,6 @@ export default {
     VerificationCheckbox
   },
 
-  beforeUpdate() {
-    // console.log("Skill ", this.skillNumber, ": ", this.skill.title)
-    // console.log("Self:", this.skill.progress.self)
-    // console.log("Education:", this.skill.progress.education)
-    // console.log("Business:", this.skill.progress.business)
-    // console.log("Certificate:", this.skill.progress.certificate)
-  },
-
   props: {
     skill: Object,
     skillNumber: Number,
@@ -55,7 +47,7 @@ export default {
     },
 
     achieve(verification) {
-      this.$emit('achieve', verification, this.skillNumber)
+      this.$emit('achieve', verification, this.skill.uid)
     }
   }
 }
