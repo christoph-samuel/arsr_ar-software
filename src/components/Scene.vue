@@ -28,6 +28,7 @@
       <Message id="message" v-if="message" :message="message" :color="messageColor" @close="closeMessage"/>
 
     </a-scene>
+    <md-button id="AR" :to="{ name: 'ar-scene'}">AR</md-button>
   </div>
 </template>
 
@@ -213,6 +214,13 @@ export default {
 </script>
 
 <style>
+#AR{
+  z-index: 1000000;
+  position: absolute;
+  right: 10px;
+  bottom: 25px;
+}
+
 #reader {
   height: 100% !important;
   width: 100% !important;
