@@ -22,7 +22,7 @@
       <SkillSet id="skillSet" ref="skillSet" v-if="showSkill && skillSet.skills !== null && this.skillNumber === 0"
                 :skill-set="skillSet" @close="closeUI" @navigate="navigate"/>
       <Skill id="skill" ref="skill" v-else-if="showSkill && skillSet.skills !== null && this.skillNumber !== 0"
-             :skill="skillSet.skills[this.skillNumber-1]" :skill-number="this.skillNumber"
+             :skillUID="skillSet.skills[this.skillNumber-1].uid" :skill-number="this.skillNumber"
              :skills-total="this.skillsTotal" @close="closeUI" @navigate="navigate" @achieve="achieve"/>
 
       <Message id="message" v-if="message" :message="message" :color="messageColor" @close="closeMessage"/>
@@ -64,6 +64,12 @@ export default {
     this.speech2text()
     this.qrCode()
 
+    let skillSetID = window.location.href.replace(/.*\?skillset=(\d+)$/gi, "$1")
+    if (skillSetID) {
+      this.skillSetID = skillSetID
+      this.loadSkills(skillSetID)
+    }
+
     let observer = new MutationObserver((mutations) => {
       mutations.forEach(() => {
         document.querySelector('#reader video').style.cssText = document.getElementById('arjs-video').style.cssText
@@ -73,6 +79,14 @@ export default {
     document.arrive("#arjs-video", () => {
       observer.observe(document.getElementById('arjs-video'), {attributes: true, attributeFilter: ['style']})
     });
+  },
+
+  watch: {
+    skillNumber: function (val) {
+      if (val === 0) {
+        this.loadSkills(this.skillSetID)
+      }
+    }
   },
 
   methods: {
@@ -120,7 +134,7 @@ export default {
         let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
         let SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList
 
-        let commands = [ 'Next' , 'Following' , 'Back', 'Previous', 'Close'];
+        let commands = ['Next', 'Following', 'Back', 'Previous', 'Close'];
         let grammar = '#JSGF V1.0; grammar commands; public <command> = ' + commands.join(' | ') + ' ;'
 
         let speechRecognitionList = new SpeechGrammarList()
@@ -134,7 +148,7 @@ export default {
         recognition.maxAlternatives = 0
 
         recognition.start()
-        console.log('Ready to receive a command.')
+        // console.log('Ready to receive a command.')
 
         let newThis = this
 
@@ -153,25 +167,25 @@ export default {
             } else if (newThis.input.match(/Close\.*/i)) {
               newThis.closeUI()
             } else if (newThis.input.match(/Verify Self Assessment\.*/i)) {
-              newThis.achieve('Self Assessment', newThis.skillSet.skills[newThis.skillNumber-1].uid)
+              newThis.achieve('Self Assessment', newThis.skillSet.skills[newThis.skillNumber - 1].uid)
             } else if (newThis.input.match(/Verify Educational Verification\.*/i)) {
-              newThis.achieve('Educational Verification', newThis.skillSet.skills[newThis.skillNumber-1].uid)
+              newThis.achieve('Educational Verification', newThis.skillSet.skills[newThis.skillNumber - 1].uid)
             } else if (newThis.input.match(/Verify Practical Expertise\.*/i)) {
-              newThis.achieve('Practical Expertise', newThis.skillSet.skills[newThis.skillNumber-1].uid)
+              newThis.achieve('Practical Expertise', newThis.skillSet.skills[newThis.skillNumber - 1].uid)
             } else if (newThis.input.match(/Verify Certification\.*/i)) {
-              newThis.achieve('Certification', newThis.skillSet.skills[newThis.skillNumber-1].uid)
+              newThis.achieve('Certification', newThis.skillSet.skills[newThis.skillNumber - 1].uid)
             }
           }
         }
 
         recognition.onspeechend = function () {
           // this.message = ""
-          console.log("Restarting Speech2Text")
+          // console.log("Restarting Speech2Text")
           newThis.speech2text()
         }
 
         recognition.onerror = function () {
-          console.log('Error occurred in recognition')
+          // console.log('Error occurred in recognition')
           newThis.speech2text()
         }
       } catch (e) {
@@ -198,10 +212,18 @@ export default {
       }
     },
 
-    achieve(verification, skillNumber) {
+    achieve(verification, level, skillNumber) {
       this.message = null
       this.message = "Request for Verification of '" + verification + "' from Skill " + skillNumber + " sent to SkillDisplay!"
       this.messageColor = "#28a745"
+
+      let sd = new SkillDisplay()
+      sd.setVerification(this.skillSetID, skillNumber, level)
+          .then(response => {
+            console.log("Verification Response:", response.data)
+          }).catch(error => {
+        console.log("Verification Error:", error)
+      })
     },
 
     closeMessage() {

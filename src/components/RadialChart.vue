@@ -4,7 +4,9 @@
       <circle cx='50%' cy='50%' r='40%' class='back' ref='back' fill='none'/>
       <circle cx='50%' cy='50%' r='40%' class='front' ref='front' fill='none'/>
       <g class='text'>
-        <text x='50%' y='50%' alignment-baseline="central" text-anchor="middle" id='percentage'>{{ percentage }}%</text>
+        <text x='50%' y='50%' alignment-baseline="central" text-anchor="middle" id='percentage'>
+          {{ Math.round(percentage) }}%
+        </text>
       </g>
     </svg>
     <p class="info">{{ info }}</p>
@@ -36,21 +38,34 @@ export default {
     }
   },
 
-  mounted() {
-    this.$refs.front.style.stroke = this.color
+  watch: {
+    percentage: function() {
+      this.buildChart()
+    }
+  },
 
-    // TODO: Use of Built-in function instead of setInterval for variable changes
-    let radius = 0
-    this.radiusInterval = setInterval(() => {
-      try {
-        if (this.$refs.front.r.baseVal.value !== radius) {
-          radius = this.$refs.front.r.baseVal.value
-          this.$refs.front.style.strokeDasharray = 2 * Math.PI * radius * (this.percentage / 100) + ', 1000000'
+  mounted() {
+    this.buildChart()
+  },
+
+  methods: {
+    buildChart() {
+      this.$refs.front.style.stroke = this.color
+
+      // TODO: Use of Built-in function instead of setInterval for variable changes
+      let percentage = Math.round(this.percentage)
+      let radius = 0
+      this.radiusInterval = setInterval(() => {
+        try {
+          if (this.$refs.front.r.baseVal.value !== radius) {
+            radius = this.$refs.front.r.baseVal.value
+            this.$refs.front.style.strokeDasharray = 2 * Math.PI * radius * (percentage / 100) + ', 1000000'
+          }
+        } catch (e) {
+          console.log(e.message)
         }
-      } catch (e) {
-        console.log(e.message)
-      }
-    }, 250)
+      }, 250)
+    }
   },
 
   beforeDestroy() {
