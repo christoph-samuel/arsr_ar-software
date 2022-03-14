@@ -1,16 +1,18 @@
 <template>
   <div>
-    <div v-if="skill !== {}" id="skillContainer">
+    <div v-if="skill !== {} && !showResource" id="skillContainer">
       <img id="logoARSR" src="/img/logo_transparent_schwarz.png" alt="Logo ARSR">
-      <img id="X" src="/img/X.svg" alt="X" @click="close()">
+      <img class="X" src="/img/X.svg" alt="X" @click="close()">
       <p id="title">{{ skill.title }}</p>
       <p id="description" v-html="skill.description"/>
       <p id="goals" v-html="skill.goals"/>
       <div id="verification">
-        <verification-checkbox color="#32BE8C" :achieved="skill.progress.self" @achieve="achieve('Self Assessment', 'self')"
+        <verification-checkbox color="#32BE8C" :achieved="skill.progress.self"
+                               @achieve="achieve('Self Assessment', 'self')"
                                info="Self Assessment"/>
         <verification-checkbox color="#4A89C4" :achieved="skill.progress.education"
-                               @achieve="achieve('Educational Verification', 'education')" info="Educational Verification"/>
+                               @achieve="achieve('Educational Verification', 'education')"
+                               info="Educational Verification"/>
         <verification-checkbox color="#F7BF5D" :achieved="skill.progress.business"
                                @achieve="achieve('Practical Expertise', 'business')" info="Practical Expertise"/>
         <verification-checkbox color="#E04C5D" :achieved="skill.progress.certificate"
@@ -19,8 +21,16 @@
       <div id="navigation">
         <img id="navPrev" src="/img/NavigationButton.svg" alt="Previous" @click="navigate(-1)"/>
         <p id="page">Skill ( {{ this.skillNumber }}/{{ this.skillsTotal }} )</p>
-        <img id="navNext" src="/img/NavigationButton.svg" alt="Next" @click="navigate(1)"/>
+        <div id="navigationRight">
+          <img id="resourceButton" src="/img/Resource.svg" alt="Resource" @click="toggleResource"/>
+          <img id="navNext" src="/img/NavigationButton.svg" alt="Next" @click="navigate(1)"/>
+        </div>
       </div>
+    </div>
+
+    <div v-if="showResource" id="resourceContainer">
+      <iframe id="resource" :src="skill.links.pdf" type="application/pdf"/>
+      <img class="X" src="/img/X.svg" alt="X" @click="toggleResource">
     </div>
   </div>
 </template>
@@ -39,7 +49,11 @@ export default {
   props: {
     skillUID: Number,
     skillNumber: Number,
-    skillsTotal: Number
+    skillsTotal: Number,
+    showResource: {
+      type: Boolean,
+      required: true
+    }
   },
 
   data: () => {
@@ -64,6 +78,7 @@ export default {
       sd.getSkill(skillUID)
           .then(response => {
             this.skill = response
+            this.skill.links = Object.assign(this.skill.links, {"pdf": "https://d.otto.de/files/13240485.pdf"})
           }).catch(error => {
         console.log(error)
       })
@@ -79,13 +94,18 @@ export default {
 
     achieve(verification, level) {
       this.$emit('achieve', verification, level, this.skillUID)
+    },
+
+    toggleResource() {
+      this.showResource = !this.showResource
+      this.$emit('toggleResource', this.showResource)
     }
   }
 }
 </script>
 
 <style scoped>
-#skillContainer {
+#skillContainer, #resourceContainer {
   display: inline-block;
   max-height: 100%;
   padding: 30px;
@@ -96,13 +116,18 @@ export default {
   backdrop-filter: blur(10px) brightness(100%);
 }
 
-#logoARSR, #X {
+#resourceContainer {
+  width: 100%;
+  height: 50vh;
+}
+
+#logoARSR, .X {
   display: block;
   height: 30px;
   margin-bottom: 30px;
 }
 
-#X {
+.X {
   position: absolute;
   top: 30px;
   right: 30px;
@@ -111,7 +136,7 @@ export default {
   filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.4));
 }
 
-#X:hover, #navPrev:hover {
+.X:hover, #navPrev:hover {
   transform: scale(1.1);
 }
 
@@ -164,6 +189,12 @@ export default {
   width: 100%;
 }
 
+#navigationRight {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 #navigation img {
   display: block;
   height: 60px;
@@ -184,18 +215,33 @@ export default {
   filter: drop-shadow(-2px -5px 5px rgba(0, 0, 0, 0.4)) !important;
 }
 
+#resourceButton {
+  height: 45px !important;
+  margin-right: 10px;
+}
+
+#resource {
+  width: 90%;
+  height: 100%;
+  zoom: 1.2;
+}
+
 @media screen and (orientation: portrait) and (max-width: 768px), screen and (orientation: landscape) and (max-height: 650px) {
-  #skillContainer {
+  #skillContainer, #resourceContainer {
     padding: 20px;
   }
 
-  #logoARSR, #X {
+  #resourceContainer {
+    height: 65vh;
+  }
+
+  #logoARSR, .X {
     display: block;
     height: 20px;
     margin-bottom: 15px;
   }
 
-  #X {
+  .X {
     top: 20px;
     right: 20px;
   }
@@ -226,22 +272,30 @@ export default {
     height: 40px;
   }
 
+  #resourceButton {
+    height: 30px !important;
+  }
+
   #page {
     font-size: 15px;
   }
 }
 
 @media screen and (orientation: landscape) and (max-height: 650px) {
-  #skillContainer {
+  #skillContainer, #resourceContainer {
     padding: 15px;
   }
 
-  #logoARSR, #X {
+  #resourceContainer {
+    height: 80vh;
+  }
+
+  #logoARSR, .X {
     height: 15px;
     margin-bottom: 10px;
   }
 
-  #X {
+  .X {
     height: 20px;
     top: 15px;
     right: 15px;
@@ -270,6 +324,10 @@ export default {
 
   #page {
     font-size: 12px;
+  }
+
+  #resource {
+    width: 95%;
   }
 }
 </style>

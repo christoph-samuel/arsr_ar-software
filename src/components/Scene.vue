@@ -23,7 +23,8 @@
                 :skill-set="skillSet" @close="closeUI" @navigate="navigate"/>
       <Skill id="skill" ref="skill" v-else-if="showSkill && skillSet.skills !== null && this.skillNumber !== 0"
              :skillUID="skillSet.skills[this.skillNumber-1].uid" :skill-number="this.skillNumber"
-             :skills-total="this.skillsTotal" @close="closeUI" @navigate="navigate" @achieve="achieve"/>
+             :skills-total="this.skillsTotal" :show-resource="showResource" @close="closeUI" @navigate="navigate"
+             @achieve="achieve" @toggle-resource="toggleResource"/>
 
       <Message id="message" v-if="message" :message="message" :color="messageColor" @close="closeMessage"/>
 
@@ -54,6 +55,7 @@ export default {
       skillNumber: 0,
       skillsTotal: 0,
       showSkill: false,
+      showResource: false,
       input: "",
       message: null,
       messageColor: null
@@ -134,7 +136,19 @@ export default {
         let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
         let SpeechGrammarList = window.SpeechGrammarList || window.webkitSpeechGrammarList
 
-        let commands = ['Next', 'Following', 'Back', 'Previous', 'Close'];
+        let commands = [
+          'Next',
+          'Following',
+          'Back',
+          'Previous',
+          'Close',
+          'Verify Self Assessment',
+          'Verify Educational Verification',
+          'Verify Practical Expertise',
+          'Verify Certification',
+          'Resource',
+          'Skill Overview'
+        ];
         let grammar = '#JSGF V1.0; grammar commands; public <command> = ' + commands.join(' | ') + ' ;'
 
         let speechRecognitionList = new SpeechGrammarList()
@@ -174,6 +188,10 @@ export default {
               newThis.achieve('Practical Expertise', newThis.skillSet.skills[newThis.skillNumber - 1].uid)
             } else if (newThis.input.match(/Verify Certification\.*/i)) {
               newThis.achieve('Certification', newThis.skillSet.skills[newThis.skillNumber - 1].uid)
+            } else if (newThis.input.match(/Resource\.*/i)) {
+              newThis.showResource = true
+            } else if (newThis.input.match(/Skill Overview\.*/i)) {
+              newThis.showResource = false
             }
           }
         }
@@ -210,6 +228,8 @@ export default {
       } else if (newSkillNumber > this.skillsTotal) {
         this.skillNumber = 0
       }
+
+      this.showResource = false
     },
 
     achieve(verification, level, skillNumber) {
@@ -228,6 +248,10 @@ export default {
 
     closeMessage() {
       this.message = null
+    },
+
+    toggleResource(value)  {
+      this.showResource = value
     }
   }
 }
