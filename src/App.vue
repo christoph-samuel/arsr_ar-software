@@ -20,6 +20,7 @@ export default {
 
 <style>
 #app {
+  background-color: black;
   width: 100%;
   height: 100%;
 }

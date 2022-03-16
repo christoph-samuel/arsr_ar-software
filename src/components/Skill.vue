@@ -1,8 +1,8 @@
 <template>
   <div>
     <div id="skillContainer">
-      <img id="logoARSR" src="/img/logo_transparent_schwarz.png" alt="Logo ARSR">
-      <img id="X" src="/img/X.svg" alt="X" @click="close()">
+<!--      <img id="logoARSR" src="/img/logo_transparent_schwarz.png" alt="Logo ARSR">-->
+<!--      <img id="X" src="/img/X.svg" alt="X" @click="close()">-->
       <p id="title">{{ skill.title }}</p>
       <p id="description" v-html="skill.description"/>
       <p id="goals" v-html="skill.goals"/>
@@ -12,11 +12,11 @@
         <verification-checkbox color="#F7BF5D" :achieved="skill.progress.business===0" @achieve="achieve('Practical Expertise')" info="Practical Expertise"/>
         <verification-checkbox color="#E04C5D" :achieved="skill.progress.certificate===0" @achieve="achieve('Certification')" info="Certification"/>
       </div>
-      <div id="navigation">
-        <img id="navPrev" src="/img/NavigationButton.svg" alt="Previous" @click="navigate(-1)"/>
-        <p id="page">Skill ( {{ this.skillNumber }}/{{ this.skillsTotal }} )</p>
-        <img id="navNext" src="/img/NavigationButton.svg" alt="Next" @click="navigate(1)"/>
-      </div>
+<!--      <div id="navigation">-->
+<!--        <img id="navPrev" src="/img/NavigationButton.svg" alt="Previous" @click="navigate(-1)"/>-->
+<!--        <p id="page">Skill ( {{ this.skillNumber }}/{{ this.skillsTotal }} )</p>-->
+<!--        <img id="navNext" src="/img/NavigationButton.svg" alt="Next" @click="navigate(1)"/>-->
+<!--      </div>-->
     </div>
   </div>
 </template>
@@ -56,8 +56,12 @@ export default {
 <style scoped>
 #skillContainer {
   display: inline-block;
-  max-height: 100%;
-  padding: 30px;
+  max-width: 95%;
+  margin-top: 20px;
+  margin-left: 30px;
+  margin-right: 30px;
+  padding-left: 20px;
+  padding-right: 20px;
   background-color: rgba(255, 255, 255, 0.8);
   border: none;
   border-radius: 10px;
@@ -65,44 +69,22 @@ export default {
   backdrop-filter: blur(10px) brightness(100%);
 }
 
-#logoARSR, #X {
-  display: block;
-  height: 30px;
-  margin-bottom: 30px;
-}
-
-#X {
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  transition: .3s;
-  cursor: pointer;
-  filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.4));
-}
-
-#X:hover, #navPrev:hover {
-  transform: scale(1.1);
-}
-
-#navNext:hover {
-  transform: scale(1.1) rotate(180deg);
-}
-
 #title {
-  height: max-content;
   font-family: 'Montserrat', sans-serif;
-  font-size: 35px;
+  font-size: 10px;
   font-weight: 700;
   line-height: 35px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+  animation: text .5s forwards .5s;
 }
 
 #description {
-  height: max-content;
   font-family: 'Inter', sans-serif;
-  font-size: 20px;
+  font-size: 7px;
   font-weight: 200;
-  margin-bottom: 10px;
+  line-height: 100%;
+  margin-bottom: 5px;
+  animation: text .5s forwards .8s;
 }
 
 #goals {
@@ -110,7 +92,7 @@ export default {
   max-height: 40vh;
   overflow-y: auto;
   font-family: 'Inter', sans-serif;
-  font-size: 20px;
+  font-size: 7px;
   font-weight: 300;
   margin-bottom: 20px;
 }
