@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="background">
     <div id="reader"></div>
     <div class="display-cover" id="container1">
       <video ref="video1" id="glass1" autoplay></video>
@@ -239,7 +239,7 @@ export default {
 </script>
 
 <style scoped>
-body{
+#background {
   background-color: black;
 }
 
@@ -294,6 +294,6 @@ video {
   width: 75%;
   position: absolute;
   top: 5%;
-  left: 0;
+  left: 1%;
 }
 </style>
