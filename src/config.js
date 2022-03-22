@@ -1,9 +1,11 @@
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
+import routes from '@/routes'
+import VueRouter from 'vue-router'
 
 // Except for main.js, modules requiring Vue should import { Vue } from '@/config.js'
 // so that unit tests and regular runtime have the same configuration
-export let Vue
+export let Vue, router
 
 export default function options(vueClass) {
     Vue = vueClass
@@ -25,5 +27,12 @@ export default function options(vueClass) {
     //     }
     // })
 
-    Vue.use(VueMaterial)
+    vueClass.use(VueRouter)
+    vueClass.use(VueMaterial)
+
+    router = new VueRouter({ routes })
+
+    return {
+        router
+    }
 }

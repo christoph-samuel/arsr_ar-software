@@ -1,18 +1,18 @@
 <template>
   <div id="app">
-    <Scene/>
+    <router-view />
 <!--    <QR/>-->
   </div>
 </template>
 
 <script>
-import Scene from './components/Scene.vue'
+//import Scene from './components/Scene.vue'
 // import QR from '@/components/QR'
 
 export default {
   name: 'App',
   components: {
-    Scene,
+    //Scene,
     // QR
   },
 }
@@ -20,6 +20,7 @@ export default {
 
 <style>
 #app {
+  background-color: black;
   width: 100%;
   height: 100%;
 }

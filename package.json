@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve --mode development",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "buildDev": "vue-cli-service build --mode development"
   },
   "dependencies": {
     "@ar-js-org/ar.js": "^3.3.3-es6-beta-03",
@@ -17,7 +18,8 @@
     "js-sha256": "^0.9.0",
     "material-icons-font": "^2.1.0",
     "vue": "^2.6.11",
-    "vue-material": "^1.0.0-beta-15"
+    "vue-material": "^1.0.0-beta-15",
+    "vue-router": "^3.5.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
