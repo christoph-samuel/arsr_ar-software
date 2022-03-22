@@ -3,9 +3,9 @@
     <div id="reader"></div>
     <div class="display-cover" id="container1">
       <video ref="video1" id="glass1" autoplay></video>
-      <SkillSet id="skillSet1" ref="skillSet" v-if="showSkill && skillSet.skills !== null && this.skillNumber === 0"
+      <ARSkillSet :AR="true" id="skillSet1" ref="skillSet" v-if="showSkill && skillSet.skills !== null && this.skillNumber === 0"
                 :skill-set="skillSet" @close="closeUI" @navigate="navigate"/>
-      <Skill id="skill1" ref="skill" v-else-if="showSkill && skillSet.skills !== null && this.skillNumber !== 0"
+      <ARSkill id="skill1" ref="skill" v-else-if="showSkill && skillSet.skills !== null && this.skillNumber !== 0"
              :skill="skillSet.skills[this.skillNumber-1]" :skill-number="this.skillNumber"
              :skills-total="this.skillsTotal" @close="closeUI" @navigate="navigate" @achieve="achieve"/>
 
@@ -13,9 +13,9 @@
     </div>
     <div class="display-cover" id="container2">
       <video ref="video2" id="glass2" autoplay></video>
-      <SkillSet id="skillSet2" ref="skillSet" v-if="showSkill && skillSet.skills !== null && this.skillNumber === 0"
+      <ARSkillSet :AR="true" id="skillSet2" ref="skillSet" v-if="showSkill && skillSet.skills !== null && this.skillNumber === 0"
                 :skill-set="skillSet" @close="closeUI" @navigate="navigate"/>
-      <Skill id="skill2" ref="skill" v-else-if="showSkill && skillSet.skills !== null && this.skillNumber !== 0"
+      <ARSkill id="skill2" ref="skill" v-else-if="showSkill && skillSet.skills !== null && this.skillNumber !== 0"
              :skill="skillSet.skills[this.skillNumber-1]" :skill-number="this.skillNumber"
              :skills-total="this.skillsTotal" @close="closeUI" @navigate="navigate" @achieve="achieve"/>
 
@@ -25,8 +25,8 @@
 </template>
 
 <script>
-import SkillSet from '@/components/SkillSet'
-import Skill from '@/components/Skill'
+import ARSkillSet from '@/components/ARSkillSet'
+import ARSkill from '@/components/ARSkill'
 import Message from '@/components/Message'
 import {Html5Qrcode} from 'html5-qrcode'
 import {SkillDisplay} from "@/services/SkillDisplay";
@@ -35,8 +35,8 @@ export default {
   name: "AR-Scene",
 
   components: {
-    SkillSet,
-    Skill,
+    ARSkillSet,
+    ARSkill,
     Message
   },
 
@@ -62,9 +62,7 @@ export default {
             ideal: 1080,
             max: 1440
           },
-          facingMode: {
-            exact: "environment"
-          }
+          facingMode: "environment"
         }
       }
     }
@@ -72,6 +70,9 @@ export default {
 
   methods: {
     async getCameraSelection() {
+      this.$refs.video1.setAttribute('autoplay', '')
+      this.$refs.video1.setAttribute('muted', '')
+      this.$refs.video1.setAttribute('playsinlines', '')
       //const devices = await navigator.mediaDevices.enumerateDevices();
       //const videoDevice = devices.filter(device => device.kind === 'videoinput')[0];
 

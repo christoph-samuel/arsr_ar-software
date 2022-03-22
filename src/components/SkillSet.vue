@@ -25,7 +25,8 @@ export default {
   },
 
   props: {
-    skillSet: Object
+    skillSet: Object,
+    AR: Boolean
   },
 
   methods: {
