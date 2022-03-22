@@ -111,8 +111,6 @@ export default {
       let config = {fps: 5}
       let skillSetID
 
-      const html5QrCode = new Html5Qrcode("reader")
-
       const qrCodeSuccessCallback = (decodedText) => {
         try {
           skillSetID = parseInt(isNaN(parseInt(decodedText)) ? decodedText.replace(/^https:\/\/my\.skilldisplay\.eu\/skillset\/(\d+)$/gi, "$1") : decodedText)
@@ -125,7 +123,18 @@ export default {
         }
       }
 
-      html5QrCode.start({facingMode: "environment"}, config, qrCodeSuccessCallback)
+      Html5Qrcode.getCameras().then(devices => {
+        if (devices && devices.length) {
+          let cameraId = devices[0].id
+          this.deleteMe = devices[0].label
+          if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i) || navigator.userAgent.match(/IEMobile/i) || navigator.userAgent.match(/WPDesktop/i) || navigator.userAgent.match(/Opera Mini/i) || navigator.userAgent.match(/BlackBerry/i)) {
+             cameraId = devices[1].id
+            this.deleteMe = devices[0].label
+          }
+          const html5QrCode = new Html5Qrcode("reader")
+          html5QrCode.start({ deviceId: { exact: cameraId} }, config, qrCodeSuccessCallback)
+        }
+      })
     },
 
     // async speech2text() {
@@ -278,6 +287,7 @@ p {
 
 .a-canvas.a-grab-cursor, .a-canvas.a-grab-cursor:hover {
   cursor: default !important;
+  z-index: -1;
 }
 
 #skillSet, #skill {
