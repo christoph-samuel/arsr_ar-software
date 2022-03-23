@@ -67,7 +67,7 @@ export default {
     this.speech2text()
     this.qrCode()
 
-    let skillSetID = window.location.href.replace(/.*\?skillset=(\d+)$/gi, "$1")
+    let skillSetID = window.location.href.replace(/.*\?skillset=(\d+)/gi, "$1")
     if (skillSetID) {
       this.skillSetID = skillSetID
       this.loadSkills(skillSetID)
