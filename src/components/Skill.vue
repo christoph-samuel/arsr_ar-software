@@ -3,7 +3,10 @@
     <div v-if="skill !== {} && !showResource" id="skillContainer">
       <img id="logoARSR" src="/img/logo_transparent_schwarz.png" alt="Logo ARSR">
       <img class="X" src="/img/X.svg" alt="X" @click="close()">
-      <p id="title">{{ skill.title }}</p>
+      <div id="titleContainer">
+        <p id="title">{{ skill.title }}</p>
+        <img id="resourceButton" src="/img/Resource.svg" alt="Resource" @click="toggleResource"/>
+      </div>
       <p id="description" v-html="skill.description"/>
       <p id="goals" v-html="skill.goals"/>
       <div id="verification">
@@ -22,14 +25,18 @@
         <img id="navPrev" src="/img/NavigationButton.svg" alt="Previous" @click="navigate(-1)"/>
         <p id="page">Skill ( {{ this.skillNumber }}/{{ this.skillsTotal }} )</p>
         <div id="navigationRight">
-          <img id="resourceButton" src="/img/Resource.svg" alt="Resource" @click="toggleResource"/>
           <img id="navNext" src="/img/NavigationButton.svg" alt="Next" @click="navigate(1)"/>
         </div>
       </div>
     </div>
 
     <div v-if="showResource" id="resourceContainer">
-      <iframe id="resource" :src="skill.links.pdf" type="application/pdf"/>
+      <iframe v-if="skill.links.video || skill.links.pdf" id="resource"
+              :src="skill.links.video ? skill.links.video : skill.links.pdf"
+              title="Resource" frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen></iframe>
+      <p v-else>Nothing to show!</p>
       <img class="X" src="/img/X.svg" alt="X" @click="toggleResource">
     </div>
   </div>
@@ -79,6 +86,7 @@ export default {
           .then(response => {
             this.skill = response
             this.skill.links = Object.assign(this.skill.links, {"pdf": "https://d.otto.de/files/13240485.pdf"})
+            this.skill.links = Object.assign(this.skill.links, {"video": "https://www.youtube.com/embed/EHqyG14yIwY?autoplay=1&loop=1&mute=1"})
           }).catch(error => {
         console.log(error)
       })
@@ -116,6 +124,13 @@ export default {
   backdrop-filter: blur(10px) brightness(100%);
 }
 
+#titleContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
 #resourceContainer {
   width: 100%;
   height: 50vh;
@@ -136,7 +151,7 @@ export default {
   filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.4));
 }
 
-.X:hover, #navPrev:hover {
+.X:hover, #navPrev:hover, #resourceButton:hover {
   transform: scale(1.1);
 }
 
@@ -150,7 +165,6 @@ export default {
   font-size: 35px;
   font-weight: 700;
   line-height: 35px;
-  margin-bottom: 10px;
 }
 
 #description {
@@ -216,8 +230,12 @@ export default {
 }
 
 #resourceButton {
+  display: block;
   height: 45px !important;
-  margin-right: 10px;
+  margin-left: 20px;
+  transition: .3s;
+  cursor: pointer;
+  filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.4));
 }
 
 #resource {
@@ -229,6 +247,10 @@ export default {
 @media screen and (orientation: portrait) and (max-width: 768px), screen and (orientation: landscape) and (max-height: 650px) {
   #skillContainer, #resourceContainer {
     padding: 20px;
+  }
+
+  #titleContainer {
+    margin-bottom: 5px;
   }
 
   #resourceContainer {
@@ -249,7 +271,6 @@ export default {
   #title {
     font-size: 25px;
     line-height: 25px;
-    margin-bottom: 5px;
   }
 
   #description {
