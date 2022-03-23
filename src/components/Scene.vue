@@ -1,23 +1,30 @@
 <template>
   <div style="width: 100%; height: 100%">
     <div id="reader"></div>
-    <a-scene embedded arjs>
+    <a-scene embedded arjs renderer="antialias: true;
+                   colorManagement: true;
+                   sortObjects: true;
+                   physicallyCorrectLights: true;">
       <a-assets>
         <a-asset-item id="logoGLTF" src="/3d/logo.glb"></a-asset-item>
-        <img id="Content-Paste-Go" src="/img/Content-Paste-Go.png">
       </a-assets>
 
-      <a-marker preset="hiro" @markerFound="loadSkills(332)">
-        <a-image v-show="skillSet.skills != null" src="#Content-Paste-Go" position="0 0 0"
-                 rotation="-90 0 0" width="0.5" height="0.5"></a-image>
-      </a-marker>
-
-      <a-marker preset="kanji" @markerFound="loadSkills('logo')" @markerLost="closeUI">
-        <a-gltf-model src="#logoGLTF" scale=".005 .005 .005" position="0 0 0" rotation="0 0 0"
-                      animation="property: rotation; dur: 5000; to: 0 0 360; loop: true; easing: linear">
+      <a-marker preset="kanji">
+<!--        <a-gltf-model src="/3d/logo.glb" scale="0.005 0.005 0.005" position="0 0 -2" rotation="0 0 0"-->
+<!--                      animation="property: rotation; dur: 5000; to: 0 0 360; loop: true; easing: linear">-->
+<!--        </a-gltf-model>-->
+        <a-gltf-model src="/3d/logo.glb" scale="0.005 0.005 0.005" position="0 0 -1" rotation="0 0 0">
         </a-gltf-model>
+
+        <a-box color="#000" position="0 0 -3" rotation="0 45 45" scale="1 1 1"></a-box>
       </a-marker>
 
+      <a-light type="ambient" color="#fff" intensity="50"></a-light>
+      <a-light type="point" intensity="50" position="2 4 4"></a-light>
+
+      <!--        <a-entity light="color: #AFA; intensity: 1.5" position="0 1.5 -4"></a-entity>-->
+<!--      <a-entity light="type: ambient; color: #FFF; intensity: 1"></a-entity>-->
+      <!--        <a-entity light="type: directional; color: #FFF; intensity: 20" position="0 1 0" rotation="-40 0 0"></a-entity>-->
 
       <SkillSet id="skillSet" ref="skillSet" v-if="showSkill && skillSet.skills !== null && this.skillNumber === 0"
                 :skill-set="skillSet" @close="closeUI" @navigate="navigate"/>
@@ -64,7 +71,7 @@ export default {
   },
 
   mounted() {
-    this.speech2text()
+    // this.speech2text()
     this.qrCode()
 
     let skillSetID = window.location.href.replace(/.*\?skillset=(\d+)/gi, "$1")
@@ -295,7 +302,7 @@ p {
 
 .a-canvas.a-grab-cursor, .a-canvas.a-grab-cursor:hover {
   cursor: default !important;
-  z-index: -1;
+  /*z-index: -1;*/
 }
 
 #skillSet, #skill {
