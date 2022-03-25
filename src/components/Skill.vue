@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="skill !== {} && !showResource" id="skillContainer">
+    <div v-show="skill !== {} && !showResource" id="skillContainer">
       <img id="logoARSR" src="/img/logo_transparent_schwarz.png" alt="Logo ARSR">
       <img class="X" src="/img/X.svg" alt="X" @click="close()">
       <div id="titleContainer">
@@ -30,11 +30,12 @@
       </div>
     </div>
 
-    <div v-if="showResource" id="resourceContainer">
-      <iframe v-if="skill.links.video || skill.links.pdf" id="resource"
-              :src="skill.links.video ? skill.links.video : skill.links.pdf"
-              title="Resource" frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    <div v-show="showResource" id="resourceContainer">
+      <youtube-vue v-if="skill.links.video" ref="ytVideo" :key="skill.links.video" :videoid="skill.links.video"
+                   :autoplay="0" width="90%" height="100%" @ended="ytVideoOnEnded"></youtube-vue>
+      <iframe v-else-if="skill.links.pdf"
+              :src="skill.links.pdf" :key="skill.links.pdf"
+              title="Resource"
               allowfullscreen></iframe>
       <p v-else>Nothing to show!</p>
       <img class="X" src="/img/X.svg" alt="X" @click="toggleResource">
@@ -45,12 +46,14 @@
 <script>
 import VerificationCheckbox from '@/components/VerificationCheckbox'
 import {SkillDisplay} from '@/services/SkillDisplay'
+import {YoutubeVue} from 'youtube-vue'
 
 export default {
   name: "Skill",
 
   components: {
-    VerificationCheckbox
+    VerificationCheckbox,
+    YoutubeVue
   },
 
   props: {
@@ -72,6 +75,13 @@ export default {
   watch: {
     skillUID: function (val) {
       this.loadSkill(val)
+    },
+    showResource: function (newVal) {
+      if (newVal) {
+        setTimeout(() => {
+          this.$refs.ytVideo.player.playVideo()
+        }, 1000)
+      }
     }
   },
 
@@ -86,7 +96,7 @@ export default {
           .then(response => {
             this.skill = response
             this.skill.links = Object.assign(this.skill.links, {"pdf": "https://d.otto.de/files/13240485.pdf"})
-            this.skill.links = Object.assign(this.skill.links, {"video": "https://www.youtube.com/embed/EHqyG14yIwY?autoplay=1&loop=1&mute=1"})
+            this.skill.links = Object.assign(this.skill.links, {"video": "EHqyG14yIwY"})
           }).catch(error => {
         console.log(error)
       })
@@ -106,7 +116,12 @@ export default {
 
     toggleResource() {
       this.showResource = !this.showResource
+      if (!this.showResource) this.$refs.ytVideo.player.pauseVideo()
       this.$emit('toggleResource', this.showResource)
+    },
+
+    ytVideoOnEnded() {
+      this.$refs.ytVideo.player.playVideo();
     }
   }
 }
@@ -238,9 +253,9 @@ export default {
   filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.4));
 }
 
-#resource {
-  width: 90%;
-  height: 100%;
+#resourceContainer iframe{
+  width: 90% !important;
+  height: 100% !important;
   zoom: 1.2;
 }
 
@@ -347,8 +362,8 @@ export default {
     font-size: 12px;
   }
 
-  #resource {
-    width: 95%;
+  #resourceContainer > iframe{
+    width: 95% !important;
   }
 }
 </style>
