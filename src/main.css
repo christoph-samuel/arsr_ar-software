@@ -12,6 +12,10 @@ body, .md-app {
     overflow-x: hidden;
 }
 
+iframe {
+    height: 100% !important;
+}
+
 
 /*
  * Additional flex classes, inspired by AngularJS Material

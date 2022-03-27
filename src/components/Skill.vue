@@ -1,9 +1,12 @@
 <template>
   <div>
-    <div v-if="skill !== {} && !showResource" id="skillContainer">
+    <div v-show="skill !== {} && !showResource" id="skillContainer">
       <img id="logoARSR" src="/img/logo_transparent_schwarz.png" alt="Logo ARSR">
       <img class="X" src="/img/X.svg" alt="X" @click="close()">
-      <p id="title">{{ skill.title }}</p>
+      <div id="titleContainer">
+        <p id="title">{{ skill.title }}</p>
+        <img id="resourceButton" src="/img/Resource.svg" alt="Resource" @click="toggleResource"/>
+      </div>
       <p id="description" v-html="skill.description"/>
       <p id="goals" v-html="skill.goals"/>
       <div id="verification">
@@ -22,14 +25,19 @@
         <img id="navPrev" src="/img/NavigationButton.svg" alt="Previous" @click="navigate(-1)"/>
         <p id="page">Skill ( {{ this.skillNumber }}/{{ this.skillsTotal }} )</p>
         <div id="navigationRight">
-          <img id="resourceButton" src="/img/Resource.svg" alt="Resource" @click="toggleResource"/>
           <img id="navNext" src="/img/NavigationButton.svg" alt="Next" @click="navigate(1)"/>
         </div>
       </div>
     </div>
 
-    <div v-if="showResource" id="resourceContainer">
-      <iframe id="resource" :src="skill.links.pdf" type="application/pdf"/>
+    <div v-show="showResource" id="resourceContainer">
+      <youtube-vue v-if="skill.links.video" ref="ytVideo" :key="skill.links.video" :videoid="skill.links.video"
+                   :autoplay="0" width="90%" height="100%" @ended="ytVideoOnEnded"></youtube-vue>
+      <iframe v-else-if="skill.links.pdf"
+              :src="skill.links.pdf" :key="skill.links.pdf"
+              title="Resource"
+              allowfullscreen></iframe>
+      <p v-else>Nothing to show!</p>
       <img class="X" src="/img/X.svg" alt="X" @click="toggleResource">
     </div>
   </div>
@@ -38,12 +46,14 @@
 <script>
 import VerificationCheckbox from '@/components/VerificationCheckbox'
 import {SkillDisplay} from '@/services/SkillDisplay'
+import {YoutubeVue} from 'youtube-vue'
 
 export default {
   name: "Skill",
 
   components: {
-    VerificationCheckbox
+    VerificationCheckbox,
+    YoutubeVue
   },
 
   props: {
@@ -65,6 +75,13 @@ export default {
   watch: {
     skillUID: function (val) {
       this.loadSkill(val)
+    },
+    showResource: function (newVal) {
+      if (newVal) {
+        setTimeout(() => {
+          this.$refs.ytVideo.player.playVideo()
+        }, 1000)
+      }
     }
   },
 
@@ -79,6 +96,7 @@ export default {
           .then(response => {
             this.skill = response
             this.skill.links = Object.assign(this.skill.links, {"pdf": "https://d.otto.de/files/13240485.pdf"})
+            this.skill.links = Object.assign(this.skill.links, {"video": "EHqyG14yIwY"})
           }).catch(error => {
         console.log(error)
       })
@@ -98,7 +116,12 @@ export default {
 
     toggleResource() {
       this.showResource = !this.showResource
+      if (!this.showResource) this.$refs.ytVideo.player.pauseVideo()
       this.$emit('toggleResource', this.showResource)
+    },
+
+    ytVideoOnEnded() {
+      this.$refs.ytVideo.player.playVideo();
     }
   }
 }
@@ -114,6 +137,13 @@ export default {
   border-radius: 10px;
   box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(10px) brightness(100%);
+}
+
+#titleContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 #resourceContainer {
@@ -136,7 +166,7 @@ export default {
   filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.4));
 }
 
-.X:hover, #navPrev:hover {
+.X:hover, #navPrev:hover, #resourceButton:hover {
   transform: scale(1.1);
 }
 
@@ -150,7 +180,6 @@ export default {
   font-size: 35px;
   font-weight: 700;
   line-height: 35px;
-  margin-bottom: 10px;
 }
 
 #description {
@@ -216,19 +245,27 @@ export default {
 }
 
 #resourceButton {
+  display: block;
   height: 45px !important;
-  margin-right: 10px;
+  margin-left: 20px;
+  transition: .3s;
+  cursor: pointer;
+  filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.4));
 }
 
-#resource {
-  width: 90%;
-  height: 100%;
+#resourceContainer iframe{
+  width: 90% !important;
+  height: 100% !important;
   zoom: 1.2;
 }
 
 @media screen and (orientation: portrait) and (max-width: 768px), screen and (orientation: landscape) and (max-height: 650px) {
   #skillContainer, #resourceContainer {
     padding: 20px;
+  }
+
+  #titleContainer {
+    margin-bottom: 5px;
   }
 
   #resourceContainer {
@@ -249,7 +286,6 @@ export default {
   #title {
     font-size: 25px;
     line-height: 25px;
-    margin-bottom: 5px;
   }
 
   #description {
@@ -326,8 +362,8 @@ export default {
     font-size: 12px;
   }
 
-  #resource {
-    width: 95%;
+  #resourceContainer > iframe{
+    width: 95% !important;
   }
 }
 </style>
