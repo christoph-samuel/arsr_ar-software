@@ -5,23 +5,23 @@
       <p id="description" v-html="skillSet.description"/>
       <p id="skillCount">Skills in SkillSet: {{ skillSet.skillCount }}</p>
       <div id="charts">
-        <radial-chart :percentage="80" info="Self Assessment" color="#32BE8C"/>
-        <radial-chart :percentage="50" info="Educational Verification" color="#4A89C4"/>
-        <radial-chart :percentage="33" info="Practical Expertise" color="#F7BF5D"/>
-        <radial-chart :percentage="98" info="Certification" color="#E04C5D"/>
+        <ARRadialChart :percentage="skillSet.progressPercentage.tier3" info="Self Assessment" color="#32BE8C"/>
+        <ARRadialChart :percentage="skillSet.progressPercentage.tier2" info="Educational Verification" color="#4A89C4"/>
+        <ARRadialChart :percentage="skillSet.progressPercentage.tier4" info="Practical Expertise" color="#F7BF5D"/>
+        <ARRadialChart :percentage="skillSet.progressPercentage.tier1" info="Certification" color="#E04C5D"/>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import RadialChart from '@/components/RadialChart'
+import ARRadialChart from "@/components/ARRadialChart";
 
 export default {
   name: "ARSkillSet",
 
   components: {
-    RadialChart
+    ARRadialChart
   },
 
   props: {

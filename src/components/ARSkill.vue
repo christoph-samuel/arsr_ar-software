@@ -5,15 +5,15 @@
       <p id="description" v-html="skill.description"/>
       <p id="goals" v-html="skill.goals"/>
       <div id="verification">
-        <verification-checkbox color="#32BE8C" :achieved="skill.progress.self"
+        <ARVerificationCheckbox color="#32BE8C" :achieved="skill.progress.self"
                                @achieve="achieve('Self Assessment', 'self')"
                                info="Self Assessment"/>
-        <verification-checkbox color="#4A89C4" :achieved="skill.progress.education"
+        <ARVerificationCheckbox color="#4A89C4" :achieved="skill.progress.education"
                                @achieve="achieve('Educational Verification', 'education')"
                                info="Educational Verification"/>
-        <verification-checkbox color="#F7BF5D" :achieved="skill.progress.business"
+        <ARVerificationCheckbox color="#F7BF5D" :achieved="skill.progress.business"
                                @achieve="achieve('Practical Expertise', 'business')" info="Practical Expertise"/>
-        <verification-checkbox color="#E04C5D" :achieved="skill.progress.certificate"
+        <ARVerificationCheckbox color="#E04C5D" :achieved="skill.progress.certificate"
                                @achieve="achieve('Certification', 'certificate')" info="Certification"/>
 
       </div>
@@ -22,13 +22,13 @@
 </template>
 
 <script>
-import VerificationCheckbox from '@/components/VerificationCheckbox'
+import ARVerificationCheckbox from '@/components/ARVerificationCheckbox'
 
 export default {
   name: "Skill",
 
   components: {
-    VerificationCheckbox
+    ARVerificationCheckbox
   },
 
   props: {
@@ -94,6 +94,7 @@ export default {
   font-family: 'Inter', sans-serif;
   font-size: 7px;
   font-weight: 300;
+  line-height: 100%;
   margin-bottom: 20px;
 }
 
@@ -121,106 +122,5 @@ export default {
   transition: .3s;
   cursor: pointer;
   filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.4));
-}
-
-#page {
-  font-family: 'Inter', sans-serif;
-  font-size: 20px;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-#navNext {
-  transform: rotate(180deg);
-  filter: drop-shadow(-2px -5px 5px rgba(0, 0, 0, 0.4)) !important;
-}
-
-@media screen and (orientation: portrait) and (max-width: 768px), screen and (orientation: landscape) and (max-height: 650px) {
-  #skillContainer {
-    padding: 20px;
-  }
-
-  #logoARSR, #X {
-    display: block;
-    height: 20px;
-    margin-bottom: 15px;
-  }
-
-  #X {
-    top: 20px;
-    right: 20px;
-  }
-
-  #title {
-    font-size: 25px;
-    line-height: 25px;
-    margin-bottom: 5px;
-  }
-
-  #description {
-    font-size: 15px;
-    line-height: 18px;
-    margin-bottom: 5px;
-  }
-
-  #goals {
-    font-size: 15px;
-    line-height: 18px;
-    margin-bottom: 10px;
-  }
-
-  #verification {
-    margin-bottom: 15px;
-  }
-
-  #navigation img {
-    height: 40px;
-  }
-
-  #page {
-    font-size: 15px;
-  }
-}
-
-@media screen and (orientation: landscape) and (max-height: 650px) {
-  #skillContainer {
-    padding: 15px;
-  }
-
-  #logoARSR, #X {
-    height: 15px;
-    margin-bottom: 10px;
-  }
-
-  #X {
-    height: 20px;
-    top: 15px;
-    right: 15px;
-  }
-
-  #title {
-    font-size: 20px;
-    line-height: 20px;
-  }
-
-  #description {
-    font-size: 12px;
-    line-height: 12px;
-  }
-
-  #goals {
-    max-height: 20vh;
-    font-size: 12px;
-    line-height: 12px;
-    margin-bottom: 5px;
-  }
-
-  #verification {
-    margin-bottom: 10px;
-  }
-
-  #page {
-    font-size: 12px;
-  }
 }
 </style>

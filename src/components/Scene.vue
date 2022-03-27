@@ -269,11 +269,19 @@ export default {
 </script>
 
 <style>
+.a-enter-vr{
+  display: none;
+}
+
 #AR{
   z-index: 1000000;
-  position: absolute;
-  right: 10px;
-  bottom: 25px;
+  background: white;
+  border: solid darkgrey 2px;
+  border-radius: 10px;
+  position: fixed;
+  right: 25px;
+  bottom: 10px;
+  filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.4));
 }
 
 #reader {
