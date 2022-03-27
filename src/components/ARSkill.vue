@@ -1,43 +1,98 @@
 <template>
   <div>
-    <div id="skillContainer">
+    <div v-show="skill !== {} && !showResource" id="skillContainer">
       <p id="title">{{ skill.title }}</p>
       <p id="description" v-html="skill.description"/>
       <p id="goals" v-html="skill.goals"/>
       <div id="verification">
         <ARVerificationCheckbox color="#32BE8C" :achieved="skill.progress.self"
-                               @achieve="achieve('Self Assessment', 'self')"
-                               info="Self Assessment"/>
+                                @achieve="achieve('Self Assessment', 'self')"
+                                info="Self Assessment"/>
         <ARVerificationCheckbox color="#4A89C4" :achieved="skill.progress.education"
-                               @achieve="achieve('Educational Verification', 'education')"
-                               info="Educational Verification"/>
+                                @achieve="achieve('Educational Verification', 'education')"
+                                info="Educational Verification"/>
         <ARVerificationCheckbox color="#F7BF5D" :achieved="skill.progress.business"
-                               @achieve="achieve('Practical Expertise', 'business')" info="Practical Expertise"/>
+                                @achieve="achieve('Practical Expertise', 'business')" info="Practical Expertise"/>
         <ARVerificationCheckbox color="#E04C5D" :achieved="skill.progress.certificate"
-                               @achieve="achieve('Certification', 'certificate')" info="Certification"/>
+                                @achieve="achieve('Certification', 'certificate')" info="Certification"/>
 
       </div>
+    </div>
+    <div v-show="showResource" id="resourceContainer">
+      <youtube-vue v-if="skill.links.video" ref="ytVideo" :key="skill.links.video + skillIdentifier" :videoid="skill.links.video"
+                   :autoplay="0" width="90%" height="100%" @ended="ytVideoOnEnded"></youtube-vue>
+      <iframe v-else-if="skill.links.pdf">
+              :src="skill.links.pdf" :key="skill.links.pdf"
+              title="Resource"
+              allowfullscreen></iframe>
+      <p v-else>Nothing to show!</p>
     </div>
   </div>
 </template>
 
 <script>
 import ARVerificationCheckbox from '@/components/ARVerificationCheckbox'
+import {SkillDisplay} from '@/services/SkillDisplay'
+import {YoutubeVue} from 'youtube-vue'
 
 export default {
   name: "Skill",
 
   components: {
-    ARVerificationCheckbox
+    ARVerificationCheckbox,
+    YoutubeVue
   },
 
   props: {
-    skill: Object,
+    skillUID: Number,
     skillNumber: Number,
-    skillsTotal: Number
+    skillsTotal: Number,
+    showResource: {
+      type: Boolean,
+      required: true
+    },
+    skillIdentifier: Number
+  },
+
+  data: () => {
+    return {
+      skill: {}
+    }
+  },
+
+  watch: {
+    skillUID: function (val) {
+      this.loadSkill(val)
+    },
+    showResource: function (newVal) {
+      if (newVal) {
+        console.log("Warum funktioniert das Scheiss autoplay nicht")
+        setTimeout(() => {
+          this.$refs.ytVideo.player.getPlayerState().then(response => {console.log(response)})
+          this.$refs.ytVideo.player.playVideo()
+          this.$refs.ytVideo.player.getPlayerState().then(response => {console.log(response)})
+        }, 5000)
+      }
+    }
+  },
+
+  mounted() {
+    this.loadSkill(this.skillUID)
   },
 
   methods: {
+    loadSkill(skillUID) {
+      let sd = new SkillDisplay()
+      sd.getSkill(skillUID)
+          .then(response => {
+            this.skill = response
+            this.skill.links = Object.assign(this.skill.links, {"pdf": "https://d.otto.de/files/13240485.pdf"})
+            this.skill.links = Object.assign(this.skill.links, {"video": "EHqyG14yIwY"})
+          }).catch(error => {
+        console.log(error)
+      })
+    },
+
     close() {
       this.$emit('close')
     },
@@ -46,8 +101,19 @@ export default {
       this.$emit('navigate', direction)
     },
 
-    achieve(verification) {
-      this.$emit('achieve', verification, this.skill.uid)
+    achieve(verification, level) {
+      this.$emit('achieve', verification, level, this.skillUID)
+    },
+
+    toggleResource() {
+      this.showResource = !this.showResource
+      //if (!this.showResource) this.$refs.ytVideo.player.pauseVideo()
+      this.$emit('toggleResource', this.showResource)
+    },
+
+    ytVideoOnEnded() {
+      console.log("Fick dich Autoplay")
+      this.$refs.ytVideo.player.playVideo();
     }
   }
 }
