@@ -1,26 +1,23 @@
 <template>
   <div style="width: 100%; height: 100%">
     <div id="reader"></div>
-    <a-scene embedded arjs renderer="antialias: true;
-                   colorManagement: true;
-                   sortObjects: true;
-                   physicallyCorrectLights: true;">
+    <a-scene embedded arjs>
       <a-assets>
         <a-asset-item id="logoGLTF" src="/3d/logo.glb"></a-asset-item>
       </a-assets>
 
-      <a-marker preset="kanji">
-<!--        <a-gltf-model src="/3d/logo.glb" scale="0.005 0.005 0.005" position="0 0 -2" rotation="0 0 0"-->
-<!--                      animation="property: rotation; dur: 5000; to: 0 0 360; loop: true; easing: linear">-->
-<!--        </a-gltf-model>-->
-        <a-gltf-model src="/3d/logo.glb" scale="0.005 0.005 0.005" position="0 0 -1" rotation="0 0 0">
+      <a-marker type="pattern" preset="kanji" @markerFound="markerFound">
+        <a-gltf-model src="/3d/logo.glb" scale="0.005 0.005 0.005" position="0 0 -2" rotation="0 0 0"
+                      animation="property: rotation; dur: 5000; to: 0 0 360; loop: true; easing: linear">
         </a-gltf-model>
+<!--        <a-gltf-model src="/3d/logo.glb" scale="0.005 0.005 0.005" position="0 0 -1" rotation="0 0 0">-->
+<!--        </a-gltf-model>-->
 
-        <a-box color="#000" position="0 0 -3" rotation="0 45 45" scale="1 1 1"></a-box>
+<!--        <a-box color="#000" position="0 0 -3" rotation="0 45 45" scale="1 1 1"></a-box>-->
       </a-marker>
 
-      <a-light type="ambient" color="#fff" intensity="50"></a-light>
-      <a-light type="point" intensity="50" position="2 4 4"></a-light>
+<!--      <a-light type="ambient" color="#fff" intensity="50"></a-light>-->
+<!--      <a-light type="point" intensity="50" position="2 4 4"></a-light>-->
 
       <!--        <a-entity light="color: #AFA; intensity: 1.5" position="0 1.5 -4"></a-entity>-->
 <!--      <a-entity light="type: ambient; color: #FFF; intensity: 1"></a-entity>-->
@@ -100,6 +97,10 @@ export default {
   },
 
   methods: {
+    markerFound() {
+      alert("Marker found")
+    },
+
     loadSkills(skillSetID) {
       if (parseInt(skillSetID)) {
         this.showSkill = true
