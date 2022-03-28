@@ -148,7 +148,7 @@ export default {
           'Verify Practical Expertise',
           'Verify Certification',
           'Resource',
-          'Skill Overview'
+          'Overview'
         ];
         let grammar = '#JSGF V1.0; grammar commands; public <command> = ' + commands.join(' | ') + ' ;'
 
@@ -181,7 +181,7 @@ export default {
               newThis.navigate(-1)
             } else if (newThis.input.match(/Close\.*/i)) {
               newThis.closeUI()
-            } else if (newThis.input.match(/Verify Self Assessment\.*/i)) {
+            } else if (newThis.input.match(/Verify Self[ -]Assessment\.*/i)) {
               newThis.achieve('Self Assessment', newThis.skillSet.skills[newThis.skillNumber - 1].uid)
             } else if (newThis.input.match(/Verify Educational Verification\.*/i)) {
               newThis.achieve('Educational Verification', newThis.skillSet.skills[newThis.skillNumber - 1].uid)
@@ -191,7 +191,7 @@ export default {
               newThis.achieve('Certification', newThis.skillSet.skills[newThis.skillNumber - 1].uid)
             } else if (newThis.input.match(/Resource\.*/i)) {
               newThis.showResource = true
-            } else if (newThis.input.match(/Skill Overview\.*/i)) {
+            } else if (newThis.input.match(/Overview\.*/i)) {
               newThis.showResource = false
             }
           }
