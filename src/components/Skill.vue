@@ -95,8 +95,11 @@ export default {
       sd.getSkill(skillUID)
           .then(response => {
             this.skill = response
-            this.skill.links = Object.assign(this.skill.links, {"pdf": "https://d.otto.de/files/13240485.pdf"})
-            this.skill.links = Object.assign(this.skill.links, {"video": "EHqyG14yIwY"})
+            if (this.skill.links[0].url.match(/https:\/\/www\.youtube\.com\/watch\?v=.*$/i)) {
+              this.skill.links = {"video": this.skill.links[0].url.replace(/https:\/\/www\.youtube\.com\/watch\?v=(.*)$/i, "$1")}
+            } else if (this.skill.links[0].url.match(/.+\.pdf\/?$/i)) {
+              this.skill.links = {"pdf": this.skill.links[0].url}
+            }
           }).catch(error => {
         console.log(error)
       })
@@ -253,7 +256,7 @@ export default {
   filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.4));
 }
 
-#resourceContainer iframe{
+#resourceContainer iframe {
   width: 90% !important;
   height: 100% !important;
   zoom: 1.2;
@@ -362,7 +365,7 @@ export default {
     font-size: 12px;
   }
 
-  #resourceContainer > iframe{
+  #resourceContainer > iframe {
     width: 95% !important;
   }
 }
