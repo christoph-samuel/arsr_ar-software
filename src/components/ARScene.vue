@@ -23,6 +23,7 @@
 
       <Message id="message2" v-if="message" :message="message" :color="messageColor" @close="closeMessage"/>
     </div>
+    <md-button id="Back" :to="{ name: '/'}">Back</md-button>
   </div>
 </template>
 
@@ -294,6 +295,17 @@ export default {
 </script>
 
 <style scoped>
+#Back{
+  z-index: 1000000;
+  background: white;
+  border: solid darkgrey 2px;
+  border-radius: 10px;
+  position: fixed;
+  right: 25px;
+  bottom: 10px;
+  filter: drop-shadow(2px 5px 5px rgba(0, 0, 0, 0.4));
+}
+
 #background {
   background-color: black;
 }

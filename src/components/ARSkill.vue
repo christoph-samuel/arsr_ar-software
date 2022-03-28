@@ -20,7 +20,7 @@
     </div>
     <div v-show="showResource" id="resourceContainer">
       <youtube-vue v-if="skill.links.video" ref="ytVideo" :key="skill.links.video + skillIdentifier" :videoid="skill.links.video"
-                   :autoplay="0" width="90%" height="100%" @ended="ytVideoOnEnded"></youtube-vue>
+                   :autoplay="1" width="90%" height="100%" @ended="ytVideoOnEnded"></youtube-vue>
       <iframe v-else-if="skill.links.pdf">
               :src="skill.links.pdf" :key="skill.links.pdf"
               title="Resource"
@@ -64,13 +64,17 @@ export default {
     skillUID: function (val) {
       this.loadSkill(val)
     },
+
     showResource: function (newVal) {
       if (newVal) {
-        console.log("Warum funktioniert das Scheiss autoplay nicht")
         setTimeout(() => {
+          console.log(this.$refs.ytVideo)
           this.$refs.ytVideo.player.getPlayerState().then(response => {console.log(response)})
           this.$refs.ytVideo.player.playVideo()
           this.$refs.ytVideo.player.getPlayerState().then(response => {console.log(response)})
+        //   console.log(document.getElementById(this.skill.links.video + this.skillIdentifier))
+        //   document.getElementById(this.skill.links.video + this.skillIdentifier).player.playVideo()
+        //   document.getElementById(this.skill.links.video + this.skillIdentifier).player.getPlayerState().then(response => {console.log(response)})
         }, 5000)
       }
     }
@@ -112,7 +116,6 @@ export default {
     },
 
     ytVideoOnEnded() {
-      console.log("Fick dich Autoplay")
       this.$refs.ytVideo.player.playVideo();
     }
   }
