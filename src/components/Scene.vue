@@ -183,12 +183,12 @@ export default {
               newThis.closeUI()
             } else if (newThis.input.match(/Verify Self[ -]Assessment\.*/i)) {
               newThis.achieve('Self Assessment', newThis.skillSet.skills[newThis.skillNumber - 1].uid)
-            } else if (newThis.input.match(/Verify Educational Verification\.*/i)) {
-              newThis.achieve('Educational Verification', newThis.skillSet.skills[newThis.skillNumber - 1].uid)
+            // } else if (newThis.input.match(/Verify Educational Verification\.*/i)) {
+            //   newThis.achieve('Educational Verification', newThis.skillSet.skills[newThis.skillNumber - 1].uid)
             } else if (newThis.input.match(/Verify Practical Expertise\.*/i)) {
               newThis.achieve('Practical Expertise', newThis.skillSet.skills[newThis.skillNumber - 1].uid)
-            } else if (newThis.input.match(/Verify Certification\.*/i)) {
-              newThis.achieve('Certification', newThis.skillSet.skills[newThis.skillNumber - 1].uid)
+            // } else if (newThis.input.match(/Verify Certification\.*/i)) {
+            //   newThis.achieve('Certification', newThis.skillSet.skills[newThis.skillNumber - 1].uid)
             } else if (newThis.input.match(/Resource\.*/i)) {
               newThis.showResource = true
             } else if (newThis.input.match(/Overview\.*/i)) {

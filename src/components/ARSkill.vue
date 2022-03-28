@@ -8,13 +8,13 @@
         <ARVerificationCheckbox color="#32BE8C" :achieved="skill.progress.self"
                                 @achieve="achieve('Self Assessment', 'self')"
                                 info="Self Assessment"/>
-        <ARVerificationCheckbox color="#4A89C4" :achieved="skill.progress.education"
-                                @achieve="achieve('Educational Verification', 'education')"
-                                info="Educational Verification"/>
+<!--        <ARVerificationCheckbox color="#4A89C4" :achieved="skill.progress.education"-->
+<!--                                @achieve="achieve('Educational Verification', 'education')"-->
+<!--                                info="Educational Verification"/>-->
         <ARVerificationCheckbox color="#F7BF5D" :achieved="skill.progress.business"
                                 @achieve="achieve('Practical Expertise', 'business')" info="Practical Expertise"/>
-        <ARVerificationCheckbox color="#E04C5D" :achieved="skill.progress.certificate"
-                                @achieve="achieve('Certification', 'certificate')" info="Certification"/>
+<!--        <ARVerificationCheckbox color="#E04C5D" :achieved="skill.progress.certificate"-->
+<!--                                @achieve="achieve('Certification', 'certificate')" info="Certification"/>-->
 
       </div>
     </div>
