@@ -21,6 +21,8 @@
       <a-entity camera></a-entity>
     </a-scene>
     <md-button id="AR" :to="{ name: 'ar-scene'}">AR</md-button>
+
+    <p style="display: none">{{hidden}}</p>
   </div>
 </template>
 
@@ -50,7 +52,8 @@ export default {
       showResource: false,
       input: "",
       message: null,
-      messageColor: null
+      messageColor: null,
+      hidden: ""
     }
   },
 
@@ -118,10 +121,8 @@ export default {
       Html5Qrcode.getCameras().then(devices => {
         if (devices && devices.length) {
           let cameraId = devices[0].id
-          this.deleteMe = devices[0].label
           if (navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone|iPad|iPod/i) || navigator.userAgent.match(/IEMobile/i) || navigator.userAgent.match(/WPDesktop/i) || navigator.userAgent.match(/Opera Mini/i) || navigator.userAgent.match(/BlackBerry/i)) {
              cameraId = devices[1].id
-            this.deleteMe = devices[0].label
           }
           const html5QrCode = new Html5Qrcode("reader")
           html5QrCode.start({ deviceId: { exact: cameraId} }, config, qrCodeSuccessCallback)
@@ -129,9 +130,6 @@ export default {
       })
     },
 
-    // async speech2text() {
-    //   speech2text().then(response => console.log("Response S2T: ", response))
-    // },
     async speech2text() {
       try {
         let SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
@@ -169,6 +167,7 @@ export default {
 
         recognition.onresult = function (event) {
           newThis.input = event.results[event.results.length - 1][0].transcript
+          newThis.hidden = newThis.input
 
           if (event.results[event.results.length - 1].isFinal) {
             if (newThis.input.match(/Next\.*/i)) {
