@@ -19,7 +19,7 @@
       </div>
     </div>
     <div v-show="showResource" id="resourceContainer">
-      <youtube-vue v-if="skill.links.video" ref="ytVideo" :key="skill.links.video + skillIdentifier" :videoid="skill.links.video"
+      <youtube-vue v-if="skill.links.video" :ref="'ytVideo' + skillIdentifier" :key="skill.links.video + skillIdentifier" :videoid="skill.links.video"
                    :autoplay="1" width="90%" height="100%" @ended="ytVideoOnEnded"></youtube-vue>
       <iframe v-else-if="skill.links.pdf">
               :src="skill.links.pdf" :key="skill.links.pdf"
@@ -68,10 +68,7 @@ export default {
     showResource: function (newVal) {
       if (newVal) {
         setTimeout(() => {
-          console.log(this.$refs.ytVideo)
-          this.$refs.ytVideo.player.getPlayerState().then(response => {console.log(response)})
-          this.$refs.ytVideo.player.playVideo()
-          this.$refs.ytVideo.player.getPlayerState().then(response => {console.log(response)})
+          this.$refs["ytVideo" + this.skillIdentifier].player.playVideo()
         //   console.log(document.getElementById(this.skill.links.video + this.skillIdentifier))
         //   document.getElementById(this.skill.links.video + this.skillIdentifier).player.playVideo()
         //   document.getElementById(this.skill.links.video + this.skillIdentifier).player.getPlayerState().then(response => {console.log(response)})
@@ -113,7 +110,7 @@ export default {
 
     toggleResource() {
       this.showResource = !this.showResource
-      //if (!this.showResource) this.$refs.ytVideo.player.pauseVideo()
+      if (!this.showResource) this.$refs.ytVideo.player.pauseVideo()
       this.$emit('toggleResource', this.showResource)
     },
 

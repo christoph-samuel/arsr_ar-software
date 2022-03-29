@@ -23,7 +23,7 @@
 
       <Message id="message2" v-if="message" :message="message" :color="messageColor" @close="closeMessage"/>
     </div>
-    <md-button id="Back" :to="{ name: '/'}">Back</md-button>
+    <md-button id="Back" :to="{ name: 'scene'}">Back</md-button>
   </div>
 </template>
 
