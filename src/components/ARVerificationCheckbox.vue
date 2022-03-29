@@ -1,6 +1,6 @@
 <template>
   <div class='container'>
-    <svg width='60%' height='60%' class='chart-container' ref="chart-container" @click="achieve">
+    <svg width='40%' height='40%' class='chart-container' ref="chart-container" @click="achieve">
       <circle cx='50%' cy='50%' r='40%' class='back' ref='back' fill='none'/>
       <svg v-if="achieved===2" xmlns="http://www.w3.org/2000/svg" height="100%" width="100%" viewBox="-6 -6 36 36"
            fill="#b2b2b2" class="check">
